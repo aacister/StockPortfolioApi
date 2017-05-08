@@ -1,0 +1,2 @@
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Data/bin/Debug/netstandard1.4/StockPortfolio.Data.deps.json
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Data/obj/Debug/netstandard1.4/StockPortfolio.Data.AssemblyInfo.cs
