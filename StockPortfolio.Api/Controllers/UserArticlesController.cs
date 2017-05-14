@@ -16,31 +16,31 @@ using StockPortfolio.Data.Interfaces;
 
 namespace StockPortfolio.Api.Controllers
 {
-    [RouteAttribute("api/[controller]")]
-    public class WeatherController : BaseController
+    [Route("api/users/{username}/newssources/{sourceId}/articles")]
+    public class UserArticlesController: BaseController
     {
-        private ILogger<WeatherController> _logger;
+        private ILogger<UsersController> _logger;
         private IMapper _mapper;
         private IStockPortfolioRepository _repo;
-        public WeatherController(IStockPortfolioRepository repo,
-            ILogger<WeatherController> logger,
+        public UserArticlesController(IStockPortfolioRepository repo,
+            ILogger<UsersController> logger,
             IMapper mapper){
             _repo = repo;
             _logger = logger;
             _mapper = mapper;
         }
 
+
         [EnableCors("CorsPolicy")]   
-        [HttpGet("{zip}", Name="WeatherGet")]
-        public async Task<IActionResult> Get(long zip)
+        [HttpGet("")]
+        public async Task<IActionResult> Get(string username, string sourceId)
         {
            try{
-               Weather weather = null;
-                weather =  await _repo.GetWeatherCondition(zip);
+          
+                var articles =  await _repo.GetUserArticles(username, sourceId);
+                if(articles== null ) return NotFound($"Articles for source {sourceId}, and user {username}  were not found.");
                 
-                if(weather == null ) return NotFound($"Weather for {zip} was not found.");
-                
-                return Ok(_mapper.Map<WeatherModel>(weather));
+                return Ok(_mapper.Map<IEnumerable<ArticleModel>>(articles));
            }
            catch{
 
@@ -48,5 +48,8 @@ namespace StockPortfolio.Api.Controllers
            return BadRequest();
         }
 
+
+       
+        
     }
 }

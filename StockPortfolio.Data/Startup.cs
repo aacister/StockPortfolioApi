@@ -32,7 +32,8 @@ namespace StockPortfolio.Data
                 options.DbConnectionString = _config.GetSection("Data:DbConnectionString").Value;
                 options.DbName = _config.GetSection("Data:DbName").Value;
                 options.StockUri = _config.GetSection("Data:StockUri").Value;
-                options.WeatherUri = _config.GetSection("Data:WeatherUri").Value;
+                options.NewsSourceUri = _config.GetSection("Data:NewsSourceUri").Value;
+                options.ArticleUri = _config.GetSection("Data:ArticleUri").Value;
             });
 
         services.AddSingleton(_config);

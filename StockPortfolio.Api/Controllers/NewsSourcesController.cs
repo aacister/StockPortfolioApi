@@ -17,64 +17,63 @@ using StockPortfolio.Data.Interfaces;
 namespace StockPortfolio.Api.Controllers
 {
     [RouteAttribute("api/[controller]")]
-    public class StocksController : BaseController
+    public class NewsSourcesController : BaseController
     {
-        private ILogger<StocksController> _logger;
+        private ILogger<NewsSourcesController> _logger;
         private IMapper _mapper;
         private IStockPortfolioRepository _repo;
-        public StocksController(IStockPortfolioRepository repo,
-            ILogger<StocksController> logger,
+        public NewsSourcesController(IStockPortfolioRepository repo,
+            ILogger<NewsSourcesController> logger,
             IMapper mapper){
             _repo = repo;
             _logger = logger;
             _mapper = mapper;
         }
 
-
-
         [EnableCors("CorsPolicy")]
         [HttpGet]
         public async Task<IActionResult>Get()
         {
             try{
-                var stocks = await _repo.GetAllStocks();
-                if(stocks == null ) return NotFound($"Stocks were not found.");
-                var stockModels = _mapper.Map<IEnumerable<StockModel>>(stocks);
-                return Ok(stockModels);
+                var sources = await _repo.GetNewsSources();
+                if(sources == null ) return NotFound($"News Sources were not found.");
+                var newsSourceModels = _mapper.Map<IEnumerable<NewsSourceModel>>(sources);
+                return Ok(newsSourceModels);
 
             }
             catch{}
             return BadRequest();
         }
 
-        [EnableCors("CorsPolicy")]
+         [EnableCors("CorsPolicy")]    
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]StockModel model)
+        public async Task<IActionResult> Post([FromBody]NewsSourceModel model)
         {
             try
             {
-                _logger.LogInformation("Adding a new Stock");
 
-                var stock = _mapper.Map<Stock>(model);
+                var source = _mapper.Map<NewsSource>(model);
 
-                if (await _repo.AddStock(stock))
+                if (await _repo.AddNewsSource(source))
                 {
-                var newUri = Url.Link("StockGet", new { symbol= stock.symbol});
-                return Created(newUri, _mapper.Map<StockModel>(stock));
+                    var newUri = Url.Link("NewsSourceGet", new { sourceId = source.name }); 
+                    return Created(newUri, _mapper.Map<NewsSourceModel>(source));
                 }
                 else
                 {
-                _logger.LogWarning("Could not save Stock to the database");
+                _logger.LogWarning("Could not save News Source to the database");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Threw exception while saving Stock: {ex}");
+                _logger.LogError($"Threw exception while saving User news: {ex}");
             }
 
             return BadRequest();
 
         }
+
+        
 
     }
 }

@@ -9,6 +9,7 @@ using StockPortfolio.Data.Interfaces;
 using StockPortfolio.Data.Entities;
 using StockPortfolio.Data.Context;
 using StockPortfolio.Data.Proxy;
+using System.Linq;
 
 namespace StockPortfolio.Data.Repositories
 {
@@ -16,78 +17,97 @@ namespace StockPortfolio.Data.Repositories
     public class StockPortfolioRepository: IStockPortfolioRepository
     {
         private readonly UserContext _contextUser= null;
-        private readonly StockProxy _proxyStock = null;
-        private readonly NewsProxy _proxyNews = null;
-        private readonly WeatherProxy _proxyWeather = null;
+        private readonly StockQuoteProxy _proxyStockQuote = null;
+        private readonly NewsSourceProxy _proxyNewsSource = null;
+        private readonly ArticleProxy _proxyArticle = null;
+        private readonly StockContext _contextStock = null;
+
         public StockPortfolioRepository(IOptions<Settings> settings)
         {
             _contextUser = new UserContext(settings);
-            _proxyStock = new StockProxy(settings);
-            _proxyNews = new NewsProxy(settings);
-            _proxyWeather = new WeatherProxy(settings);
+            _proxyStockQuote = new StockQuoteProxy(settings);
+            _proxyNewsSource = new NewsSourceProxy(settings);
+            _proxyArticle = new ArticleProxy(settings);
+            _contextStock = new StockContext(settings);
+
+        }
+        //Stocks
+        public  async Task<StockQuote> GetStockQuote(string symbol){
+            try{
+                return await _proxyStockQuote.GetStockQuoteData(symbol);
+            }
+            catch(Exception ex){
+                throw ex;
+            }
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+        //Portfolio Stocks
+        public async Task<IEnumerable<Stock>> GetAllStocks()
         {
             try{
-                return await _contextUser.Users.Find(_ => true).ToListAsync();
+                return await _contextStock.Stocks.Find(_ => true).ToListAsync();
             }
             catch(Exception ex)
             {
                 throw ex;
             }
         }
-        
-        public async Task<User> GetUser(string username)
+
+         public async Task<bool> AddStock(Stock stock)
         {
-            var filter = Builders<User>.Filter.Eq("UserName", username);
+            try
+            {
+                await _contextStock.Stocks.InsertOneAsync(stock);
+            
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            return true;
+
+        }
+
+
+        //News Sources
+        public async Task<IEnumerable<NewsSource>> GetSeedNewsSources(){
             try{
-                return await _contextUser
-                                .Users
-                                .Find(filter)
-                                .FirstOrDefaultAsync();
-                                
+                return await _proxyNewsSource.GetNewsSourceData();
             }
-            catch(Exception ex){
+            catch(Exception ex)
+            {
                 throw ex;
             }
         }
 
-        public async Task<IEnumerable<News>> GetUserNews(string username)
+        public async Task<IEnumerable<NewsSource>> GetNewsSources(){
+            try{
+                return await _proxyNewsSource.NewsSources.Find(_ => true).ToListAsync();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> AddNewsSource(NewsSource newsSource)
         {
-            var filter = Builders<User>.Filter.Eq("UserName", username);
             try
             {
-                var user = await _contextUser    
-                        .Users
-                        .Find(filter)
-                        .FirstOrDefaultAsync();
-                
-                return user.News;
+                await _proxyNewsSource.NewsSources.InsertOneAsync(newsSource);
+            
             }
-            catch(Exception ex){
-                throw ex;
-            }          
-        }
-
-        public async Task<IEnumerable<Stock>> GetUserStocks(string username)
-        {
-            var filter = Builders<User>.Filter.Eq("UserName", username);
-            try
+            catch (Exception ex)
             {
-                    var filteredUser = await _contextUser
-                            .Users
-                            .Find(filter)
-                            .FirstOrDefaultAsync();
 
-                    return filteredUser.Stocks;
-                    
-            }
-            catch(Exception ex){
                 throw ex;
             }
+            return true;
+
         }
 
+        //Users
         public async Task<bool> AddUser(User user)
         {
             try
@@ -117,11 +137,11 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> UpdateUser(string username, string first, string last, string zip)
         {
-            var filter = Builders<User>.Filter.Eq(u => u.UserName, username);
+            var filter = Builders<User>.Filter.Eq(u => u.userName, username);
             var update = Builders<User>.Update
-                            .Set(u => u.FirstName, first)
-                            .Set(u => u.LastName, last)
-                            .Set(u => u.Zip, zip);
+                            .Set(u => u.firstName, first)
+                            .Set(u => u.lastName, last)
+                            .Set(u => u.zip, zip);
             try{
                 await _contextUser.Users.UpdateOneAsync(filter, update);
               
@@ -133,29 +153,54 @@ namespace StockPortfolio.Data.Repositories
             return true;
         }
 
-        public  async Task<Stock> GetStock(string symbol){
+        public async Task<IEnumerable<User>> GetAllUsers()
+        {
             try{
-                return await _proxyStock.GetStockData(symbol);
-            }
-            catch(Exception ex){
-                throw ex;
-            }
-        }
-
-        public async Task<IEnumerable<News>> GetNews(string symbol){
-            try{
-                return await _proxyNews.GetNewsDataByStockSymbol(symbol);
+                return await _contextUser.Users.Find(_ => true).ToListAsync();
             }
             catch(Exception ex)
             {
                 throw ex;
             }
         }
-
-        public async Task<bool> AddUserStock(string username, Stock stock)
+        
+        public async Task<User> GetUser(string username)
         {
             var filter = Builders<User>.Filter.Eq("UserName", username);
-            var insert = Builders<User>.Update.AddToSet(u => u.Stocks, stock );
+            try{
+                return await _contextUser
+                                .Users
+                                .Find(filter)
+                                .FirstOrDefaultAsync();
+                                
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+        }
+
+        //User News Source
+
+        public async Task<IEnumerable<NewsSource>> GetUserNewsSources(string username)
+        {
+            var filter = Builders<User>.Filter.Eq("UserName", username);
+            try
+            {
+                var user = await _contextUser    
+                        .Users
+                        .Find(filter)
+                        .FirstOrDefaultAsync();
+                
+                return user.newsSources;
+            }
+            catch(Exception ex){
+                throw ex;
+            }          
+        }
+
+        public async Task<bool> AddUserNewsSource(string username, NewsSource source){
+            var filter = Builders<User>.Filter.Eq("UserName", username);
+            var insert = Builders<User>.Update.AddToSet(u => u.newsSources, source );
         
             try
             {
@@ -170,17 +215,83 @@ namespace StockPortfolio.Data.Repositories
             return true;
         }
 
-        public async Task<bool> AddUserNews(string username, News news)
-        {
-          
+        public async Task<bool> DeleteUserNewsSource(string username, string sourceId){
+            var source = await _proxyNewsSource.GetNewsSourceDataBySourceId(sourceId);// This line will be removed
+            //Need to figure out how to pull using symbol
             var filter = Builders<User>.Filter.Eq("UserName", username);
-            var insert = Builders<User>.Update.AddToSet(u => u.News, news );
-        
+            var delete = Builders<User>.Update.Pull(u => u.newsSources, source);
+            try{
+                await _contextUser.Users.UpdateOneAsync(
+                    filter, delete);
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+            return true;
+        }
+
+        //User Arcticles
+        public async Task<IEnumerable<Article>> GetUserArticles(string username, string sourceId){
+            var filter = Builders<User>.Filter.Eq("UserName", username);
             try
             {
                     var filteredUser = await _contextUser
                             .Users
-                            .UpdateOneAsync(filter, insert);
+                            .Find(filter)
+                            .FirstOrDefaultAsync();
+
+                    var sources = filteredUser.newsSources;
+                    var source = sources.Where(x => x.id == sourceId).FirstOrDefault();
+                    if(source != null)
+                    {
+                        return await _proxyArticle.GetArticleData(source.id);
+                    }
+                    else
+                        return null;
+                   
+                    
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+        }
+
+        //User Stocks
+        public async Task<IEnumerable<Stock>> GetUserStocks(string username)
+        {
+            var filter = Builders<User>.Filter.Eq("UserName", username);
+            try
+            {
+                    var filteredUser = await _contextUser
+                            .Users
+                            .Find(filter)
+                            .FirstOrDefaultAsync();
+
+                    return filteredUser.stocks;
+                    
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+        }
+
+        public async Task<bool> AddUserStock(string username, string symbol)
+        {
+            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol);
+            var filterUser = Builders<User>.Filter.Eq("userName", username);
+            
+            try
+            {
+                    var stock = await _contextStock
+                                .Stocks
+                                .Find(filterStock)
+                                .FirstOrDefaultAsync();
+                
+                    
+                    var insert = Builders<User>.Update.AddToSet(u => u.stocks, stock );           
+                    var filteredUser = await _contextUser
+                            .Users
+                            .UpdateOneAsync(filterUser, insert);
   
             }
             catch(Exception ex){
@@ -191,11 +302,15 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> DeleteUserStock(string username, string symbol)
         {
-            var stock = await _proxyStock.GetStockData(symbol);// This line will be removed
-            //Need to figure out how to pull using symbol
+            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol);
             var filter = Builders<User>.Filter.Eq("UserName", username);
-            var delete = Builders<User>.Update.Pull(u => u.Stocks, stock);
+            
             try{
+                var stock = await _contextStock
+                                .Stocks
+                                .Find(filterStock)
+                                .FirstOrDefaultAsync();
+                var delete = Builders<User>.Update.Pull(u => u.stocks, stock);
                 await _contextUser.Users.UpdateOneAsync(
                     filter, delete);
             }
@@ -205,34 +320,12 @@ namespace StockPortfolio.Data.Repositories
             return true;
         }
 
-        public async Task<bool> DeleteUserNews(string username, int newsId)
-        {
-            var news = await _proxyNews.GetNewsDataByNewsId(newsId); // this line will be removed
-            //Need to figure out how to Pull using newsId
-            var filter = Builders<User>.Filter.Eq("UserName", username);
-            var delete = Builders<User>.Update.Pull(u => u.News, news);
-            try{
-                await _contextUser.Users.UpdateOneAsync(
-                    filter, delete);
-            }
-            catch(Exception ex){
-                throw ex;
-            }
-            return true;
-        }
+        
+        
+        
 
-        public async Task<Weather> GetWeatherCondition(long zip)
-        {
-            try{
-                return await _proxyWeather.GetWeatherCondion(zip);
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-        }
 
-    
+
         
     }
 }

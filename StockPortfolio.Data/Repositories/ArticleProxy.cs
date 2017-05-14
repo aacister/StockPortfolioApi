@@ -9,29 +9,34 @@ using System.Text;
 using System.Threading.Tasks;
 using StockPortfolio.Data.Entities;
 using Newtonsoft.Json;
+using StockPortfolio.Data;
+
 
 namespace StockPortfolio.Data.Proxy
 {
-    public class StockProxy
+    public class ArticleProxy
     {
         private readonly string _url  = null;
 
-        public StockProxy(IOptions<Settings> settings)
+
+        public ArticleProxy(IOptions<Settings> settings)
         {
-            _url = settings.Value.StockUri;
+            _url = settings.Value.ArticleUri;
+
             
         }
-        public async Task<Stock> GetStockData(string symbol)
+        public async Task<IEnumerable<Article>> GetArticleData(string sourceId)
         {
 
-                var url = $"{_url}?symbol={symbol}";
+                var url = $"{_url}?sourceId={sourceId}";
                 using(var http = new HttpClient()){
                     var response = await http.GetAsync(url);
                     var result = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<Stock>(result);
+                    var data = JsonConvert.DeserializeObject<IEnumerable<Article>>(result);
                     return data;
                 }
         }
+
     }
 
 

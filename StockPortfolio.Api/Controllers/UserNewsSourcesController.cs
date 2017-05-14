@@ -12,17 +12,15 @@ using StockPortfolio.Data.Entities;
 using StockPortfolio.Api.Models;
 using StockPortfolio.Api.Converters;
 using StockPortfolio.Data.Interfaces;
-
-
 namespace StockPortfolio.Api.Controllers
 {
-     [Route("api/users/{username}/stocks")]
-    public class UserStocksController: BaseController
+    [Route("api/users/{username}/newssources")]
+    public class UserNewsSourcesController: BaseController
     {
-        private ILogger<UsersController> _logger;
+         private ILogger<UsersController> _logger;
         private IMapper _mapper;
         private IStockPortfolioRepository _repo;
-        public UserStocksController(IStockPortfolioRepository repo,
+        public UserNewsSourcesController(IStockPortfolioRepository repo,
             ILogger<UsersController> logger,
             IMapper mapper){
             _repo = repo;
@@ -62,26 +60,26 @@ namespace StockPortfolio.Api.Controllers
 
         [EnableCors("CorsPolicy")]    
         [HttpPost]
-        public async Task<IActionResult> Post(string username, [FromBody]StockModel model)
+        public async Task<IActionResult> Post(string username, [FromBody]NewsSourceModel model)
         {
             try
             {
 
-                var stock = _mapper.Map<Stock>(model);
+                var source = _mapper.Map<NewsSource>(model);
 
-                if (await _repo.AddUserStock(username, stock.symbol))
+                if (await _repo.AddUserNewsSource(username, source))
                 {
-                    var newUri = Url.Link("UserStockGet", new { symbol = stock.symbol }); 
-                    return Created(newUri, _mapper.Map<StockModel>(stock));
+                    var newUri = Url.Link("UserNewsSourceGet", new { sourceId = source.name }); 
+                    return Created(newUri, _mapper.Map<NewsSourceModel>(source));
                 }
                 else
                 {
-                _logger.LogWarning("Could not save User stock to the database");
+                _logger.LogWarning("Could not save news source to the database");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Threw exception while saving User stock: {ex}");
+                _logger.LogError($"Threw exception while saving news source: {ex}");
             }
 
             return BadRequest();
@@ -90,21 +88,21 @@ namespace StockPortfolio.Api.Controllers
 
         [EnableCors("CorsPolicy")]
         [HttpDelete("{symbol}")]
-        public async Task<IActionResult> Delete(string username, string symbol)
+        public async Task<IActionResult> Delete(string username, string sourceId)
         {
             try
             {
-                if(await _repo.DeleteUserStock(username, symbol))
+                if(await _repo.DeleteUserNewsSource(username, sourceId))
                     return Ok();
                 else
-                    return NotFound($"Could not delete user stock {symbol} for {username}");
+                    return NotFound($"Could not delete user news source {sourceId} for {username}");
 
             }
             catch (Exception)
             {
             }
 
-            return BadRequest("Could not delete user stock");
+            return BadRequest("Could not delete user news source");
         }
         
     }

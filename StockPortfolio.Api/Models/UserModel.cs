@@ -15,6 +15,6 @@ namespace StockPortfolio.Api.Models
         public string Zip {get; set;}
         public IList<StockModel> Stocks {get; set;}
 
-        public IList<NewsModel> News {get; set;}
+        public IList<NewsSourceModel> News {get; set;}
     }
 }

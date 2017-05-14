@@ -5,8 +5,9 @@ namespace StockPortfolio.Data
         public string DbConnectionString;
         public string DbName;
         public string StockUri;
-        public string NewsUri;
-        public string WeatherUri;
+        public string NewsSourceUri;
+        public string ArticleUri;
+
         
     }
 }

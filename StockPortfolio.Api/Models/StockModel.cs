@@ -9,16 +9,11 @@ namespace StockPortfolio.Api.Models
 {
     public class StockModel
     {
-        [Required]
-        public string Symbol {get; set;}
-        public string Name {get; set;}
-        public double LastPrice {get; set;}
-        public double PercentChange {get; set;}
-        public double Open {get; set;}
-        public double High {get; set;}
-        public double Low {get; set;}
-        public double Close {get; set;}
-        public IList<NewsModel> News {get; set;}
+
+        public string symbol {get; set;}
+        public string name {get; set;}
+        public string logoUrl {get; set;}
+   
 
     }
 }

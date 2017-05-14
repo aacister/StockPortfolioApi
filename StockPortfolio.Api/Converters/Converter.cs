@@ -8,51 +8,60 @@ namespace StockPortfolio.Api.Converters
     {
         
         public Converter(){
-            CreateMap<Stock, StockModel>()
+            CreateMap<StockQuote, StockQuoteModel>()
               .ForMember(s => s.Symbol, 
-                opt => opt.MapFrom(stock => stock.symbol))
+                opt => opt.MapFrom(quote => quote.symbol))
               .ForMember(s => s.Name,
-                opt => opt.MapFrom(stock => stock.name))
+                opt => opt.MapFrom(quote => quote.name))
               .ForMember(s => s.LastPrice,
-                opt => opt.MapFrom(stock => stock.lastPrice))
+                opt => opt.MapFrom(quote => quote.lastPrice))
               .ForMember(s => s.PercentChange,
-                opt => opt.MapFrom(stock => stock.percentChange))
+                opt => opt.MapFrom(quote => quote.percentChange))
               .ForMember(s => s.Open,
-                opt => opt.MapFrom(stock => stock.open))
+                opt => opt.MapFrom(quote => quote.open))
               .ForMember(s => s.High,
-                opt => opt.MapFrom(stock => stock.high))
+                opt => opt.MapFrom(quote => quote.high))
               .ForMember(s => s.Low,
-                opt => opt.MapFrom(stock => stock.low))
+                opt => opt.MapFrom(quote => quote.low))
               .ForMember(s => s.Close,
-                opt => opt.MapFrom(stock => stock.close));
+                opt => opt.MapFrom(quote => quote.close))
+              .ForMember(s => s.Volume,
+                opt => opt.MapFrom(quote => quote.volume));
+              
 
-             CreateMap<News, NewsModel>()
-              .ForMember(n => n.Timestamp,
-                opt => opt.MapFrom(news => news.timestamp))
-              .ForMember(n => n.Headline,
-                opt => opt.MapFrom(news => news.headline))
-              .ForMember(n => n.Source,
-                opt => opt.MapFrom(news => news.source))
-              .ForMember(n => n.Preview,
-                opt => opt.MapFrom(news => news.preview))
-              .ForMember(n => n.HeadlineUrl,
-                opt => opt.MapFrom(news => news.headlineURL));
+             CreateMap<NewsSource, NewsSourceModel>()
+              .ForMember(n => n.id,
+                opt => opt.MapFrom(source => source.id))
+              .ForMember(n => n.name,
+                opt => opt.MapFrom(source => source.name))
+                .ForMember(n => n.description,
+                opt => opt.MapFrom(source => source.description));
 
-             CreateMap<Weather, WeatherModel>()
-              .ForMember(w => w.condition,
-                opt => opt.MapFrom(weather => weather.Condition));
+
+                CreateMap<Article, ArticleModel>()
+                .ForMember(n => n.author,
+                opt => opt.MapFrom(article => article.author))
+                .ForMember(n => n.title,
+                opt => opt.MapFrom(article => article.title))
+                .ForMember(n => n.description,
+                opt => opt.MapFrom(article => article.description))
+                .ForMember(n => n.url,
+                opt => opt.MapFrom(article => article.url))
+                .ForMember(n => n.publishedAt,
+                opt => opt.MapFrom(article => article.publishedAt));
+
 
              CreateMap<User, UserModel>()
               .ForMember(u => u.UserName,
-                opt => opt.MapFrom(user => user.UserName))
+                opt => opt.MapFrom(user => user.userName))
               .ForMember(u => u.Password,
-                opt => opt.MapFrom(user => user.Password))
+                opt => opt.MapFrom(user => user.password))
               .ForMember(u => u.FirstName,
-                opt => opt.MapFrom(user => user.FirstName))
+                opt => opt.MapFrom(user => user.firstName))
               .ForMember(u => u.LastName,
-                opt => opt.MapFrom(user => user.LastName))
+                opt => opt.MapFrom(user => user.lastName))
               .ForMember(u => u.Zip,
-                opt => opt.MapFrom(user => user.Zip));
+                opt => opt.MapFrom(user => user.zip));
             
         }
 

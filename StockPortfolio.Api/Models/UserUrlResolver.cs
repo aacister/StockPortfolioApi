@@ -24,7 +24,7 @@ namespace StockPortfolio.Api.Models
     public string Resolve(User source, UserModel destination, string destMember, ResolutionContext context)
     {
       var url = (IUrlHelper)_httpContextAccessor.HttpContext.Items[BaseController.URLHELPER];
-      return url.Link("UserGet", new { username = source.UserName });
+      return url.Link("UserGet", new { username = source.userName });
 
     }
   }

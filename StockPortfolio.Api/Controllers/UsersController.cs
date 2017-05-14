@@ -75,7 +75,7 @@ namespace StockPortfolio.Api.Controllers
 
                 if (await _repo.AddUser(user))
                 {
-                var newUri = Url.Link("UserGet", new { username = user.UserName });
+                var newUri = Url.Link("UserGet", new { username = user.userName });
                 return Created(newUri, _mapper.Map<UserModel>(user));
                 }
                 else
@@ -123,7 +123,7 @@ namespace StockPortfolio.Api.Controllers
                 var oldUser = await _repo.GetUser(username);
                 if (oldUser == null) return NotFound($"Could not find user with username of {username}");
 
-            if( await _repo.DeleteUser(oldUser.UserName))
+            if( await _repo.DeleteUser(oldUser.userName))
                 {
                 return Ok();
                 }

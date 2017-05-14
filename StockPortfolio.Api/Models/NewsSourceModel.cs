@@ -6,13 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 namespace StockPortfolio.Api.Models
 {
-    public class WeatherModel
+    public class NewsSourceModel
     {
-        public ConditionText condition {get; set;}
-    }
+        public string id{get; set;}
+        public string name {get; set;}
+        public string description {get; set;}
 
-    public class ConditionText
-    {
-        public string text {get; set;}
     }
 }

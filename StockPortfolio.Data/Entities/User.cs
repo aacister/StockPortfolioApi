@@ -7,14 +7,14 @@ namespace StockPortfolio.Data.Entities
     public class User
     {
         [BsonId]
-        public string Id {get; set;}
-        public string UserName {get; set;}
-        public string Password {get; set;}
-        public string FirstName {get; set;}
-        public string LastName {get; set;}
-        public string Zip {get; set;}
-        public IEnumerable<Stock> Stocks {get; set;}
-        public IEnumerable<News> News {get; set;}
+        public string id {get; set;}
+        public string userName {get; set;}
+        public string password {get; set;}
+        public string firstName {get; set;}
+        public string lastName {get; set;}
+        public string zip {get; set;}
+        public IEnumerable<Stock> stocks {get; set;}
+        public IEnumerable<NewsSource> newsSources {get; set;}
         
     }
 }
