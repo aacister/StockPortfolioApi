@@ -20,7 +20,7 @@ namespace StockPortfolio.Data.Context
         {
             get
             {
-                return _database.GetCollection<User>("User");
+                return _database.GetCollection<User>("users");
             }
         }
 

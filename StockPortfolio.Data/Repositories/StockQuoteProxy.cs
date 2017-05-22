@@ -20,19 +20,30 @@ namespace StockPortfolio.Data.Proxy
 
         public StockQuoteProxy(IOptions<Settings> settings)
         {
-            _url = settings.Value.StockUri;
+            _url = settings.Value.StockQuotesUri;
 
             
         }
         public async Task<StockQuote> GetStockQuoteData(string symbol)
         {
 
-                var url = $"{_url}?symbol={symbol}";
-                using(var http = new HttpClient()){
-                    var response = await http.GetAsync(url);
-                    var result = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<StockQuote>(result);
-                    return data;
+                try{
+                    var url = $"{_url}&symbols={symbol}";
+                    using(var http = new HttpClient()){
+                        var response = await http.GetAsync(url);
+                        var result = await response.Content.ReadAsStringAsync();
+                        var quoteResponse = JsonConvert.DeserializeObject<StockQuoteResponse>(result);
+                        if(quoteResponse.status.code == 200)
+                            if(quoteResponse.results.Count > 0)
+                                return quoteResponse.results[0];
+                            else 
+                                return null;
+                        else
+                            throw new Exception(quoteResponse.status.message);
+                    }
+                }
+                catch(Exception ex){
+                    throw ex;
                 }
         }
 

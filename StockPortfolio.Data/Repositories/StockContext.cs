@@ -32,7 +32,7 @@ namespace StockPortfolio.Data.Proxy
         {
             get
             {
-                return _database.GetCollection<Stock>("Stock");
+                return _database.GetCollection<Stock>("stocks");
             }
         }
     }

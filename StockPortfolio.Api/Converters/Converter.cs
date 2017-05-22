@@ -26,8 +26,17 @@ namespace StockPortfolio.Api.Converters
               .ForMember(s => s.Close,
                 opt => opt.MapFrom(quote => quote.close))
               .ForMember(s => s.Volume,
-                opt => opt.MapFrom(quote => quote.volume));
+                opt => opt.MapFrom(quote => quote.volume))
+              .ReverseMap();
               
+            CreateMap<Stock, StockModel>()
+              .ForMember(s => s.symbol,
+                opt => opt.MapFrom(stock =>stock.symbol))
+              .ForMember(s => s.name,
+                opt => opt.MapFrom(stock => stock.name))
+              .ForMember(s => s.logoUrl,
+                opt => opt.MapFrom(stock => stock.logoUrl))
+              .ReverseMap();
 
              CreateMap<NewsSource, NewsSourceModel>()
               .ForMember(n => n.id,
@@ -35,7 +44,8 @@ namespace StockPortfolio.Api.Converters
               .ForMember(n => n.name,
                 opt => opt.MapFrom(source => source.name))
                 .ForMember(n => n.description,
-                opt => opt.MapFrom(source => source.description));
+                opt => opt.MapFrom(source => source.description))
+              .ReverseMap();
 
 
                 CreateMap<Article, ArticleModel>()
@@ -48,7 +58,8 @@ namespace StockPortfolio.Api.Converters
                 .ForMember(n => n.url,
                 opt => opt.MapFrom(article => article.url))
                 .ForMember(n => n.publishedAt,
-                opt => opt.MapFrom(article => article.publishedAt));
+                opt => opt.MapFrom(article => article.publishedAt))
+                .ReverseMap();
 
 
              CreateMap<User, UserModel>()
@@ -61,7 +72,8 @@ namespace StockPortfolio.Api.Converters
               .ForMember(u => u.LastName,
                 opt => opt.MapFrom(user => user.lastName))
               .ForMember(u => u.Zip,
-                opt => opt.MapFrom(user => user.zip));
+                opt => opt.MapFrom(user => user.zip))
+                .ReverseMap();
             
         }
 

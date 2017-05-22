@@ -32,7 +32,7 @@ namespace StockPortfolio.Api.Controllers
 
 
         [EnableCors("CorsPolicy")]   
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> Get(string username, string sourceId)
         {
            try{

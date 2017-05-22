@@ -15,7 +15,7 @@ namespace StockPortfolio.Data.Proxy
 {
     public class NewsSourceProxy
     {
-        private readonly string _url  = null;
+        private string _url  = null;
          private readonly IMongoDatabase _database = null;
 
         public NewsSourceProxy(IOptions<Settings> settings)
@@ -28,25 +28,45 @@ namespace StockPortfolio.Data.Proxy
         }
         public async Task<IEnumerable<NewsSource>> GetNewsSourceData()
         {
-
+            try{
                 var url = $"{_url}";
                 using(var http = new HttpClient()){
                     var response = await http.GetAsync(url);
                     var result = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<IEnumerable<NewsSource>>(result);
-                    return data;
+                    var responseObj = JsonConvert.DeserializeObject<NewsSourceResponse>(result);
+
+                    if (responseObj.status == "ok")
+                        return responseObj.sources;
+                    else
+                        throw new Exception("Error retrieving data sources.");
                 }
+            }
+            catch(Exception ex){
+                throw ex;
+            }
         }
 
         public async Task<NewsSource> GetNewsSourceDataBySourceId(string sourceId)
         {
 
-                var url = $"{_url}?sourceId={sourceId}";
+                var url = $"{_url}"; 
                 using(var http = new HttpClient()){
                     var response = await http.GetAsync(url);
                     var result = await response.Content.ReadAsStringAsync();
-                    var data = JsonConvert.DeserializeObject<NewsSource>(result);
-                    return data;
+                    var responseObj= JsonConvert.DeserializeObject<NewsSourceResponse>(result);
+                    if (responseObj.status == "ok")
+                        if(responseObj.sources.Count >0)
+                        {
+                            var sources =  responseObj.sources.Where(x=>x.id == sourceId.Trim().ToUpper()).ToList<NewsSource>();
+                            if(sources.Count>0)
+                                return sources[0];
+                            else
+                                return null;
+                        }
+                        else
+                            return null;
+                    else
+                        throw new Exception("Error retrieving data sources.");
                 }
         }
 
@@ -54,7 +74,7 @@ namespace StockPortfolio.Data.Proxy
         {
             get
             {
-                return _database.GetCollection<NewsSource>("NewsSource");
+                return _database.GetCollection<NewsSource>("newsSources");
             }
         }
     }

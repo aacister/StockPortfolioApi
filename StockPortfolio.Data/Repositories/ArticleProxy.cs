@@ -25,10 +25,10 @@ namespace StockPortfolio.Data.Proxy
 
             
         }
-        public async Task<IEnumerable<Article>> GetArticleData(string sourceId)
+        public async Task<IEnumerable<Article>> GetArticleData(string sourceName)
         {
 
-                var url = $"{_url}?sourceId={sourceId}";
+                var url = $"{_url}{sourceName}";
                 using(var http = new HttpClient()){
                     var response = await http.GetAsync(url);
                     var result = await response.Content.ReadAsStringAsync();

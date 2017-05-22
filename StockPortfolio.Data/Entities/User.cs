@@ -7,7 +7,6 @@ namespace StockPortfolio.Data.Entities
     public class User
     {
         [BsonId]
-        public string id {get; set;}
         public string userName {get; set;}
         public string password {get; set;}
         public string firstName {get; set;}

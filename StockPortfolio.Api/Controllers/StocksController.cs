@@ -33,17 +33,41 @@ namespace StockPortfolio.Api.Controllers
 
 
         [EnableCors("CorsPolicy")]
-        [HttpGet]
+        [HttpGet("", Name="StocksGet")]
         public async Task<IActionResult>Get()
         {
             try{
                 var stocks = await _repo.GetAllStocks();
-                if(stocks == null ) return NotFound($"Stocks were not found.");
+                if(stocks == null ) {
+                    _logger.LogWarning($"Stocks were not found.");
+                    return NotFound($"Stocks were not found.");
+                    }
                 var stockModels = _mapper.Map<IEnumerable<StockModel>>(stocks);
                 return Ok(stockModels);
 
             }
-            catch{}
+            catch(Exception ex){
+                _logger.LogError(ex.Message);
+            }
+            return BadRequest();
+        }
+        [EnableCors("CorsPolicy")]
+        [HttpGet("{symbol}", Name="StockGet")]
+        public async Task<IActionResult>Get(string symbol)
+        {
+            try{
+                var stock = await _repo.GetStock(symbol);
+                if(stock == null ){
+                    _logger.LogWarning($"Stock was not found.");
+                    return NotFound($"Stock was not found.");
+                }
+                var stockModel = _mapper.Map<StockModel>(stock);
+                return Ok(stockModel);
+
+            }
+            catch(Exception ex){
+                _logger.LogError(ex.Message);
+            }
             return BadRequest();
         }
 
@@ -53,7 +77,6 @@ namespace StockPortfolio.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Adding a new Stock");
 
                 var stock = _mapper.Map<Stock>(model);
 
@@ -64,7 +87,7 @@ namespace StockPortfolio.Api.Controllers
                 }
                 else
                 {
-                _logger.LogWarning("Could not save Stock to the database");
+                    _logger.LogWarning("Could not save Stock to the database");
                 }
             }
             catch (Exception ex)

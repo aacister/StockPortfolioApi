@@ -31,20 +31,24 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]   
-        [HttpGet("{symbol}", Name="StockGet")]
+        [HttpGet("{symbol}", Name="StockQuotesGet")]
         public async Task<IActionResult> Get(string symbol)
         {
            try{
                StockQuote quote = null;
                quote =  await _repo.GetStockQuote(symbol);
-               if(quote == null ) return NotFound($"Stock {symbol} was not found.");
+               if(quote == null ){
+                    _logger.LogWarning($"Stock {symbol} was not found.");
+                    return NotFound($"Stock {symbol} was not found.");
+               }
                
                var stockQuoteModel = _mapper.Map<StockQuoteModel>(quote); 
 
                 return Ok(stockQuoteModel);
            }
-           catch{
-
+           catch(Exception ex){
+                _logger.LogError($"Threw exception while saving Stock: {ex}");
+               
            }
            return BadRequest();
         }

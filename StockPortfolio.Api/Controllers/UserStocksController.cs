@@ -48,7 +48,7 @@ namespace StockPortfolio.Api.Controllers
                 var stocks =  await _repo.GetUserStocks(username);
                 if(stocks== null ) return NotFound($"User stocks for {username} were not found.");
 
-                var stock = stocks.Where(x => x.symbol == symbol);
+                var stock = stocks.Where(x => x.symbol == symbol.Trim().ToUpper()).FirstOrDefault<Stock>();
                 if(stock == null ) return NotFound($"User stock {symbol} was not found.");
                 
                 return Ok(_mapper.Map<StockModel>(stock));
@@ -89,7 +89,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
-        [HttpDelete("{symbol}")]
+        [HttpDelete]
         public async Task<IActionResult> Delete(string username, string symbol)
         {
             try

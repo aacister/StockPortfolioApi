@@ -31,7 +31,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]   
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> Get()
         {
            try{
@@ -69,8 +69,7 @@ namespace StockPortfolio.Api.Controllers
         {
             try
             {
-                _logger.LogInformation("Creating a new User");
-
+                model.UserName = model.UserName.Trim().ToUpper();
                 var user = _mapper.Map<User>(model);
 
                 if (await _repo.AddUser(user))

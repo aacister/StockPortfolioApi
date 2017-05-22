@@ -53,10 +53,28 @@ namespace StockPortfolio.Data.Repositories
             }
         }
 
+        public async Task<Stock> GetStock(string symbol)
+        {
+            var filter = Builders<Stock>.Filter.Eq("symbol", symbol.Trim().ToUpper());
+            try{
+                return await _contextStock
+                                .Stocks
+                                .Find(filter)
+                                .FirstOrDefaultAsync();
+                                
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
          public async Task<bool> AddStock(Stock stock)
         {
             try
             {
+                stock.symbol = stock.symbol.Trim().ToUpper(); //Format to upper
                 await _contextStock.Stocks.InsertOneAsync(stock);
             
             }
@@ -81,6 +99,20 @@ namespace StockPortfolio.Data.Repositories
             }
         }
 
+        public async Task<NewsSource> GetNewsSourceDataBySourceId(string sourceId)
+        {
+            try{
+                
+                return await _proxyNewsSource.GetNewsSourceDataBySourceId(sourceId);
+                
+                
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<IEnumerable<NewsSource>> GetNewsSources(){
             try{
                 return await _proxyNewsSource.NewsSources.Find(_ => true).ToListAsync();
@@ -95,6 +127,7 @@ namespace StockPortfolio.Data.Repositories
         {
             try
             {
+                newsSource.id = newsSource.id.Trim().ToUpper();
                 await _proxyNewsSource.NewsSources.InsertOneAsync(newsSource);
             
             }
@@ -127,7 +160,7 @@ namespace StockPortfolio.Data.Repositories
         public async Task<bool> DeleteUser(string username){
             try{
                 await _contextUser.Users.DeleteOneAsync(
-                    Builders<User>.Filter.Eq("UserName", username));
+                    Builders<User>.Filter.Eq("userName", username.Trim().ToUpper()));
             }
             catch(Exception ex){
                 throw ex;
@@ -137,7 +170,7 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> UpdateUser(string username, string first, string last, string zip)
         {
-            var filter = Builders<User>.Filter.Eq(u => u.userName, username);
+            var filter = Builders<User>.Filter.Eq(u => u.userName, username.Trim().ToUpper());
             var update = Builders<User>.Update
                             .Set(u => u.firstName, first)
                             .Set(u => u.lastName, last)
@@ -166,7 +199,8 @@ namespace StockPortfolio.Data.Repositories
         
         public async Task<User> GetUser(string username)
         {
-            var filter = Builders<User>.Filter.Eq("UserName", username);
+            username = username.Trim().ToUpper();
+            var filter = Builders<User>.Filter.Eq("userName", username);
             try{
                 return await _contextUser
                                 .Users
@@ -244,7 +278,7 @@ namespace StockPortfolio.Data.Repositories
                     var source = sources.Where(x => x.id == sourceId).FirstOrDefault();
                     if(source != null)
                     {
-                        return await _proxyArticle.GetArticleData(source.id);
+                        return await _proxyArticle.GetArticleData(source.name);
                     }
                     else
                         return null;
@@ -259,7 +293,7 @@ namespace StockPortfolio.Data.Repositories
         //User Stocks
         public async Task<IEnumerable<Stock>> GetUserStocks(string username)
         {
-            var filter = Builders<User>.Filter.Eq("UserName", username);
+            var filter = Builders<User>.Filter.Eq("userName", username.Trim().ToUpper());
             try
             {
                     var filteredUser = await _contextUser
@@ -277,8 +311,8 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> AddUserStock(string username, string symbol)
         {
-            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol);
-            var filterUser = Builders<User>.Filter.Eq("userName", username);
+            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol.Trim().ToUpper());
+            var filterUser = Builders<User>.Filter.Eq("userName", username.Trim().ToUpper());
             
             try
             {
@@ -302,8 +336,8 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> DeleteUserStock(string username, string symbol)
         {
-            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol);
-            var filter = Builders<User>.Filter.Eq("UserName", username);
+            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol.Trim().ToUpper());
+            var filter = Builders<User>.Filter.Eq("UserName", username.Trim().ToUpper());
             
             try{
                 var stock = await _contextStock

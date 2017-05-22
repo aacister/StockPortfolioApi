@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using StockPortfolio.Api.Models;
+using StockPortfolio.Data;
 using StockPortfolio.Data.Interfaces;
 using StockPortfolio.Data.Repositories;
 using AutoMapper;
@@ -31,6 +32,17 @@ namespace StockPortfolio.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+             services.Configure<Settings>(options =>
+            {
+                options.DbConnectionString = _config.GetSection("Data:DbConnectionString").Value;
+                options.DbName = _config.GetSection("Data:DbName").Value;
+                options.StockQuotesUri = _config.GetSection("Data:StockQuotesUri").Value;
+                options.NewsSourceUri = _config.GetSection("Data:NewsSourceUri").Value;
+                options.ArticleUri = _config.GetSection("Data:ArticleUri").Value;
+            });
+
+    
             services.AddCors(options => { options.AddPolicy("CorsPolicy", 
                                       builder => builder.AllowAnyOrigin() 
                                                         .AllowAnyMethod() 

@@ -38,7 +38,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
          [EnableCors("CorsPolicy")]   
-        [HttpGet("{symbol}", Name="UserStockGet")]
+        [HttpGet("{symbol}", Name="UserNewsSourceGet")]
         public async Task<IActionResult> Get(string username, string symbol)
         {
            try{

@@ -13,11 +13,13 @@ namespace StockPortfolio.Data.Interfaces
 
         //Stocks
         Task<IEnumerable<Stock>> GetAllStocks();
+        Task<Stock> GetStock(string symbol);
         Task<bool> AddStock(Stock stock);
 
         //News Sources
         Task<IEnumerable<NewsSource>> GetSeedNewsSources();
         Task<IEnumerable<NewsSource>> GetNewsSources();
+        Task<NewsSource> GetNewsSourceDataBySourceId(string sourceId);
         Task<bool> AddNewsSource(NewsSource newsSource);
    
 
