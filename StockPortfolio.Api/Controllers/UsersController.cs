@@ -69,7 +69,7 @@ namespace StockPortfolio.Api.Controllers
         {
             try
             {
-                model.UserName = model.UserName.Trim().ToUpper();
+                model.UserName = model.UserName;
                 var user = _mapper.Map<User>(model);
 
                 if (await _repo.AddUser(user))

@@ -5,6 +5,15 @@ using System.Runtime.Serialization;
 namespace StockPortfolio.Data.Entities
 {
     [DataContract]
+    public class ArticleResponse
+    {
+        [DataMember]
+        public string status {get; set;}
+
+        [DataMember]
+        public List<Article> articles {get; set;}
+    }
+    [DataContract]
     public class Article
     {
         [DataMember]

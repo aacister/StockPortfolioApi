@@ -55,7 +55,7 @@ namespace StockPortfolio.Api.Controllers
         public async Task<IActionResult>Get(string sourceId)
         {
             try{
-                sourceId = sourceId.Trim().ToUpper();
+                sourceId = sourceId;
                 var source = await _repo.GetNewsSourceDataBySourceId(sourceId);
                 if(source == null ) {
                     _logger.LogWarning($"News Source was not found.");
@@ -83,7 +83,7 @@ namespace StockPortfolio.Api.Controllers
 
                 if (await _repo.AddNewsSource(source))
                 {
-                    var newUri = Url.Link("NewsSourceGet", new { sourceId = source.id.Trim().ToUpper()}); 
+                    var newUri = Url.Link("NewsSourceGet", new { sourceId = source.id}); 
                     return Created(newUri, _mapper.Map<NewsSourceModel>(source));
                 }
                 else

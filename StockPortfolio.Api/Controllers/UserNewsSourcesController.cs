@@ -32,24 +32,24 @@ namespace StockPortfolio.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string username)
         {
-        var stocks = await _repo.GetUserStocks(username);
+        var sources = await _repo.GetUserNewsSources(username);
 
-        return Ok(_mapper.Map<IEnumerable<StockModel>>(stocks));
+        return Ok(_mapper.Map<IEnumerable<NewsSourceModel>>(sources));
         }
 
          [EnableCors("CorsPolicy")]   
-        [HttpGet("{symbol}", Name="UserNewsSourceGet")]
-        public async Task<IActionResult> Get(string username, string symbol)
+        [HttpGet("{sourceId}", Name="UserNewsSourceGet")]
+        public async Task<IActionResult> Get(string username, string sourceId)
         {
            try{
           
-                var stocks =  await _repo.GetUserStocks(username);
-                if(stocks== null ) return NotFound($"User stocks for {username} were not found.");
+                var sources =  await _repo.GetUserNewsSources(username);
+                if(sources == null ) return NotFound($"User news sources for {username} were not found.");
 
-                var stock = stocks.Where(x => x.symbol == symbol);
-                if(stock == null ) return NotFound($"User stock {symbol} was not found.");
+                var source = sources.Where(x => x.id == sourceId).FirstOrDefault<NewsSource>();
+                if(source == null ) return NotFound($"User news source {sourceId} was not found.");
                 
-                return Ok(_mapper.Map<StockModel>(stock));
+                return Ok(_mapper.Map<NewsSourceModel>(source));
            }
            catch{
 
@@ -59,14 +59,14 @@ namespace StockPortfolio.Api.Controllers
 
 
         [EnableCors("CorsPolicy")]    
-        [HttpPost]
-        public async Task<IActionResult> Post(string username, [FromBody]NewsSourceModel model)
+        [HttpPost("{sourceId}")]
+        public async Task<IActionResult> Post(string username, string sourceId)
         {
             try
             {
-
+                var model = await _repo.GetNewsSourceDataBySourceId(sourceId);
                 var source = _mapper.Map<NewsSource>(model);
-
+                if(source==null) return NotFound($"News source {sourceId} for {username} was not found.");
                 if (await _repo.AddUserNewsSource(username, source))
                 {
                     var newUri = Url.Link("UserNewsSourceGet", new { sourceId = source.name }); 
@@ -87,7 +87,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
-        [HttpDelete("{symbol}")]
+        [HttpDelete("{sourceId}")]
         public async Task<IActionResult> Delete(string username, string sourceId)
         {
             try

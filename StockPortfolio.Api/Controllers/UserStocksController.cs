@@ -48,7 +48,7 @@ namespace StockPortfolio.Api.Controllers
                 var stocks =  await _repo.GetUserStocks(username);
                 if(stocks== null ) return NotFound($"User stocks for {username} were not found.");
 
-                var stock = stocks.Where(x => x.symbol == symbol.Trim().ToUpper()).FirstOrDefault<Stock>();
+                var stock = stocks.Where(x => x.symbol == symbol).FirstOrDefault<Stock>();
                 if(stock == null ) return NotFound($"User stock {symbol} was not found.");
                 
                 return Ok(_mapper.Map<StockModel>(stock));
@@ -61,12 +61,12 @@ namespace StockPortfolio.Api.Controllers
 
 
         [EnableCors("CorsPolicy")]    
-        [HttpPost]
-        public async Task<IActionResult> Post(string username, [FromBody]StockModel model)
+        [HttpPost("{symbol}")]
+        public async Task<IActionResult> Post(string username, string symbol)
         {
             try
             {
-
+                var model = await _repo.GetStock(symbol);
                 var stock = _mapper.Map<Stock>(model);
 
                 if (await _repo.AddUserStock(username, stock.symbol))
@@ -89,7 +89,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
-        [HttpDelete]
+        [HttpDelete("{symbol}")]
         public async Task<IActionResult> Delete(string username, string symbol)
         {
             try

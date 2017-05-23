@@ -55,7 +55,7 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<Stock> GetStock(string symbol)
         {
-            var filter = Builders<Stock>.Filter.Eq("symbol", symbol.Trim().ToUpper());
+            var filter = Builders<Stock>.Filter.Eq("symbol", symbol);
             try{
                 return await _contextStock
                                 .Stocks
@@ -74,7 +74,7 @@ namespace StockPortfolio.Data.Repositories
         {
             try
             {
-                stock.symbol = stock.symbol.Trim().ToUpper(); //Format to upper
+                stock.symbol = stock.symbol; //Format to upper
                 await _contextStock.Stocks.InsertOneAsync(stock);
             
             }
@@ -127,7 +127,7 @@ namespace StockPortfolio.Data.Repositories
         {
             try
             {
-                newsSource.id = newsSource.id.Trim().ToUpper();
+                newsSource.id = newsSource.id;
                 await _proxyNewsSource.NewsSources.InsertOneAsync(newsSource);
             
             }
@@ -160,7 +160,7 @@ namespace StockPortfolio.Data.Repositories
         public async Task<bool> DeleteUser(string username){
             try{
                 await _contextUser.Users.DeleteOneAsync(
-                    Builders<User>.Filter.Eq("userName", username.Trim().ToUpper()));
+                    Builders<User>.Filter.Eq("userName", username));
             }
             catch(Exception ex){
                 throw ex;
@@ -170,7 +170,7 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> UpdateUser(string username, string first, string last, string zip)
         {
-            var filter = Builders<User>.Filter.Eq(u => u.userName, username.Trim().ToUpper());
+            var filter = Builders<User>.Filter.Eq(u => u.userName, username);
             var update = Builders<User>.Update
                             .Set(u => u.firstName, first)
                             .Set(u => u.lastName, last)
@@ -199,7 +199,7 @@ namespace StockPortfolio.Data.Repositories
         
         public async Task<User> GetUser(string username)
         {
-            username = username.Trim().ToUpper();
+            username = username;
             var filter = Builders<User>.Filter.Eq("userName", username);
             try{
                 return await _contextUser
@@ -217,7 +217,7 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<IEnumerable<NewsSource>> GetUserNewsSources(string username)
         {
-            var filter = Builders<User>.Filter.Eq("UserName", username);
+            var filter = Builders<User>.Filter.Eq("userName", username);
             try
             {
                 var user = await _contextUser    
@@ -233,7 +233,7 @@ namespace StockPortfolio.Data.Repositories
         }
 
         public async Task<bool> AddUserNewsSource(string username, NewsSource source){
-            var filter = Builders<User>.Filter.Eq("UserName", username);
+            var filter = Builders<User>.Filter.Eq("userName", username);
             var insert = Builders<User>.Update.AddToSet(u => u.newsSources, source );
         
             try
@@ -266,7 +266,7 @@ namespace StockPortfolio.Data.Repositories
 
         //User Arcticles
         public async Task<IEnumerable<Article>> GetUserArticles(string username, string sourceId){
-            var filter = Builders<User>.Filter.Eq("UserName", username);
+            var filter = Builders<User>.Filter.Eq("userName", username);
             try
             {
                     var filteredUser = await _contextUser
@@ -275,10 +275,10 @@ namespace StockPortfolio.Data.Repositories
                             .FirstOrDefaultAsync();
 
                     var sources = filteredUser.newsSources;
-                    var source = sources.Where(x => x.id == sourceId).FirstOrDefault();
+                    var source = sources.Where(x => x.id == sourceId).FirstOrDefault<NewsSource>();
                     if(source != null)
                     {
-                        return await _proxyArticle.GetArticleData(source.name);
+                        return await _proxyArticle.GetArticleData(source.id);
                     }
                     else
                         return null;
@@ -293,7 +293,7 @@ namespace StockPortfolio.Data.Repositories
         //User Stocks
         public async Task<IEnumerable<Stock>> GetUserStocks(string username)
         {
-            var filter = Builders<User>.Filter.Eq("userName", username.Trim().ToUpper());
+            var filter = Builders<User>.Filter.Eq("userName", username);
             try
             {
                     var filteredUser = await _contextUser
@@ -311,8 +311,8 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> AddUserStock(string username, string symbol)
         {
-            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol.Trim().ToUpper());
-            var filterUser = Builders<User>.Filter.Eq("userName", username.Trim().ToUpper());
+            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol);
+            var filterUser = Builders<User>.Filter.Eq("userName", username);
             
             try
             {
@@ -336,8 +336,8 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> DeleteUserStock(string username, string symbol)
         {
-            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol.Trim().ToUpper());
-            var filter = Builders<User>.Filter.Eq("UserName", username.Trim().ToUpper());
+            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol);
+            var filter = Builders<User>.Filter.Eq("UserName", username);
             
             try{
                 var stock = await _contextStock

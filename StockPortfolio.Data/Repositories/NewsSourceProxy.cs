@@ -57,7 +57,7 @@ namespace StockPortfolio.Data.Proxy
                     if (responseObj.status == "ok")
                         if(responseObj.sources.Count >0)
                         {
-                            var sources =  responseObj.sources.Where(x=>x.id == sourceId.Trim().ToUpper()).ToList<NewsSource>();
+                            var sources =  responseObj.sources.Where(x=>x.id.ToUpper().Contains(sourceId)).ToList<NewsSource>();
                             if(sources.Count>0)
                                 return sources[0];
                             else
