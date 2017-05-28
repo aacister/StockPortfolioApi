@@ -55,7 +55,6 @@ namespace StockPortfolio.Api.Controllers
         public async Task<IActionResult>Get(string sourceId)
         {
             try{
-                sourceId = sourceId;
                 var source = await _repo.GetNewsSourceDataBySourceId(sourceId);
                 if(source == null ) {
                     _logger.LogWarning($"News Source was not found.");
@@ -72,7 +71,8 @@ namespace StockPortfolio.Api.Controllers
             return BadRequest();
         }
 
-         [EnableCors("CorsPolicy")]    
+        [EnableCors("CorsPolicy")] 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]NewsSourceModel model)
         {

@@ -199,7 +199,7 @@ namespace StockPortfolio.Data.Repositories
         
         public async Task<User> GetUser(string username)
         {
-            username = username;
+    
             var filter = Builders<User>.Filter.Eq("userName", username);
             try{
                 return await _contextUser

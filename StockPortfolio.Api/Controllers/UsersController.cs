@@ -64,6 +64,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]UserModel model)
         {
@@ -92,6 +93,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]   
+        [Authorize]
         [HttpPut("{username}")]
         public async Task<IActionResult> Put(string username, [FromBody] UserModel model)
         {
@@ -114,6 +116,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
+        [Authorize]
         [HttpDelete("{username}")]
         public async Task<IActionResult> Delete(string username)
         {

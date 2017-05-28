@@ -2,6 +2,7 @@ using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 
+
 namespace StockPortfolio.Data.Entities
 {
     public class User

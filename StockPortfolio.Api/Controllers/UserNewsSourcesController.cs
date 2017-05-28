@@ -58,7 +58,8 @@ namespace StockPortfolio.Api.Controllers
         }
 
 
-        [EnableCors("CorsPolicy")]    
+        [EnableCors("CorsPolicy")]
+        [Authorize]
         [HttpPost("{sourceId}")]
         public async Task<IActionResult> Post(string username, string sourceId)
         {
@@ -87,6 +88,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
+        [Authorize]
         [HttpDelete("{sourceId}")]
         public async Task<IActionResult> Delete(string username, string sourceId)
         {

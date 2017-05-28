@@ -8,9 +8,13 @@ namespace StockPortfolio.Api.Models
 {
     public class UserModel
     {
+        [Required]
         public string UserName {get; set;}
+        [Required]
         public string Password {get; set;}
+        [Required]
         public string FirstName {get; set;}
+        [Required]
         public string LastName {get; set;}
         public string Zip {get; set;}
         public IList<StockModel> Stocks {get; set;}

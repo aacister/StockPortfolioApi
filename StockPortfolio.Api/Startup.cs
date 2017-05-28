@@ -1,17 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.IO;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using StockPortfolio.Api.Models;
 using StockPortfolio.Data;
+using StockPortfolio.Data.Entities;
 using StockPortfolio.Data.Interfaces;
 using StockPortfolio.Data.Repositories;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
+
 
 namespace StockPortfolio.Api
 {
@@ -42,6 +52,15 @@ namespace StockPortfolio.Api
                 options.ArticleUri = _config.GetSection("Data:ArticleUri").Value;
             });
 
+            var secretKey = _config.GetSection("Tokens:Key").Value;
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+            services.Configure<TokenProviderOptions>(options => 
+            {
+                options.Audience = _config.GetSection("Tokens:Audience").Value;
+                options.Issuer = _config.GetSection("Tokens:Issuer").Value;
+                options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+            });
+
     
             services.AddCors(options => { options.AddPolicy("CorsPolicy", 
                                       builder => builder.AllowAnyOrigin() 
@@ -50,9 +69,9 @@ namespace StockPortfolio.Api
                                                         .AllowCredentials()); 
                                     });          
 
+            services.AddIdentityWithMongoStores(_config.GetSection("Data:DbConnectionString").Value).AddDefaultTokenProviders();
             services.AddSingleton(_config);
             services.AddAutoMapper();
-            // Add framework services.
             services.AddMvc();
             services.AddScoped<IStockPortfolioRepository, StockPortfolioRepository>();
         }
@@ -64,6 +83,29 @@ namespace StockPortfolio.Api
 
             loggerFactory.AddConsole(_config.GetSection("Logging"));
             loggerFactory.AddDebug();
+
+            var secretKey = _config["Tokens:Key"];
+            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
+
+            //Validate token
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = signingKey,
+                ValidateIssuer = true,
+                ValidIssuer = _config.GetSection("Tokens:Issuer").Value,
+                ValidateAudience = true,
+                ValidAudience = _config.GetSection("Tokens:Audience").Value,
+                ValidateLifetime = true
+            };
+        
+            app.UseJwtBearerAuthentication(new JwtBearerOptions{
+                AutomaticAuthenticate = true,
+                TokenValidationParameters = tokenValidationParameters
+            });
+
+            
+ 
 
             app.UseMvc();
         }

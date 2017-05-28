@@ -72,6 +72,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]StockModel model)
         {
