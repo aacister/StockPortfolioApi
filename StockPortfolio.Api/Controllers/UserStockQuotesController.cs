@@ -16,13 +16,13 @@ using StockPortfolio.Data.Interfaces;
 
 namespace StockPortfolio.Api.Controllers
 {
-    [Route("api/users/{username}/newssources/articles")]
-    public class UserArticlesController: BaseController
+     [Route("api/users/{username}/stockquotes")]
+    public class UserStockQuotesController: BaseController
     {
         private ILogger<UsersController> _logger;
         private IMapper _mapper;
         private IStockPortfolioRepository _repo;
-        public UserArticlesController(IStockPortfolioRepository repo,
+        public UserStocksController(IStockPortfolioRepository repo,
             ILogger<UsersController> logger,
             IMapper mapper){
             _repo = repo;
@@ -30,18 +30,15 @@ namespace StockPortfolio.Api.Controllers
             _mapper = mapper;
         }
 
-
-
-	
-	[EnableCors("CorsPolicy")]      
+        [EnableCors("CorsPolicy")]      
         [HttpGet]
         public async Task<IActionResult> Get(string username)
         {
 		try{
-			var articles = await _repo.GetUserArticles(username);
-			return OK(_mapper.Map<IEnumerable<ArticleModel>>(articles));
 
+        		var quotes = await _repo.GetUserStockQuotes(username);
 
+        		return Ok(_mapper.Map<IEnumerable<StockQuoteModel>>(quotes));
 		}
 		catch{
 		}
@@ -49,7 +46,5 @@ namespace StockPortfolio.Api.Controllers
         }
 
 
-       
-        
     }
 }

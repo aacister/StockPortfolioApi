@@ -25,28 +25,36 @@ namespace StockPortfolio.Data.Proxy
 
             
         }
-        public async Task<IEnumerable<Article>> GetArticleData(string sourceId)
+
+    }
+
+    public async Task<IEnumerable<Article>> GetArticlesData(params string[] sourceIds)
         {
             try{
+		var articles = new List<Article>();
+		foreach(var sourceId in sourceIds)
+		{
+			var url = $"{_url}{sourceId}";
+                	using(var http = new HttpClient()){
+                    		var response = await http.GetAsync(url);
+                    		var result = await response.Content.ReadAsStringAsync();
+                    		var articleResponse = JsonConvert.DeserializeObject<ArticleResponse>(result);
+                    		if(articleResponse.status == "ok")
+				{
+					foreach(var a in articleResponse.articles)
+						articles.add(a);
+				}
 
-                var url = $"{_url}{sourceId}";
-                using(var http = new HttpClient()){
-                    var response = await http.GetAsync(url);
-                    var result = await response.Content.ReadAsStringAsync();
-                    var articleResponse = JsonConvert.DeserializeObject<ArticleResponse>(result);
-                    if(articleResponse.status == "ok")
-                        return articleResponse.articles;
-                    else
-                        throw new Exception("Could not get articles.");
+			}
                 }
+		return articles;
+		
             }
-            catch(Exception ex)
-            {
+            catch(Exception ex){
                 throw new Exception(ex.Message);
             }
         }
 
-    }
-
 
 }
+

@@ -24,7 +24,8 @@ namespace StockPortfolio.Data.Proxy
 
             
         }
-        public async Task<StockQuote> GetStockQuoteData(string symbol)
+	
+	public async Task<StockQuote> GetStockQuoteData(string symbol)
         {
 
                 try{
@@ -46,9 +47,35 @@ namespace StockPortfolio.Data.Proxy
                     throw ex;
                 }
         }
-
-
-    }
-
-
+	
+	public async Task<IEnumerable<StockQuote>> GetStockQuotesData(params string[] symbols)
+        {
+            try{
+		var urlStocks = string.Empty;
+		foreach(var symbol in symbols)
+		{
+			if(urlStocks.length <= 0)
+				urlStocks += symbol;
+			urlStocks += "%2C" + symbol;
+		}
+		var url = $"{_url}&symbols={urlStocks}";
+                using(var http = new HttpClient()){
+                        var response = await http.GetAsync(url);
+                        var result = await response.Content.ReadAsStringAsync();
+                        var quoteResponse = JsonConvert.DeserializeObject<StockQuoteResponse>(result);
+                        if(quoteResponse.status.code == 200)
+                            if(quoteResponse.results.Count > 0)
+                                return quoteResponse.results[0];
+                            else 
+                                return null;
+                        else
+                            throw new Exception(quoteResponse.status.message);
+                    }
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+        }
+	
+     }
 }

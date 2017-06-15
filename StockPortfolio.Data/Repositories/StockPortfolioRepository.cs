@@ -41,7 +41,18 @@ namespace StockPortfolio.Data.Repositories
             }
         }
 
-        //Portfolio Stocks
+	public  async Task<StockQuote> GetStockQuotes(param string[] symbols){
+            try
+	    {
+                return await _proxyStockQuote.GetStockQuotesData(symbol);
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+	}
+
+	
+
         public async Task<IEnumerable<Stock>> GetAllStocks()
         {
             try{
@@ -290,6 +301,28 @@ namespace StockPortfolio.Data.Repositories
             }
         }
 
+	public  async Task<IEnumerable<Article>> GetUserArticles(string username){
+	    var filter = Builders<User>.Filter.Eq("userName", username);
+            try
+	    {
+		var filteredUser = await _contextUser
+                            .Users
+                            .Find(filter)
+                            .FirstOrDefaultAsync();
+
+                var sources =   filteredUser.newsSources;
+		string[] sourceIds = new string[sourceIds.length];
+			for(int i=0; i++; i<sources.length)
+				sourceIds[i] = sources[i].sourceId;
+		
+		
+                return await _proxyArticle.GetArticlesData(sourceIds);
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+	}
+
         //User Stocks
         public async Task<IEnumerable<Stock>> GetUserStocks(string username)
         {
@@ -308,6 +341,28 @@ namespace StockPortfolio.Data.Repositories
                 throw ex;
             }
         }
+
+	public  async Task<IEnumerable<StockQuote>> GetUserStockQuotes(string username){
+	    var filter = Builders<User>.Filter.Eq("userName", username);
+            try
+	    {
+		var filteredUser = await _contextUser
+                            .Users
+                            .Find(filter)
+                            .FirstOrDefaultAsync();
+
+                var stocks =   filteredUser.stocks;
+		string[] symbols = new string[stocks.length];
+			for(int i=0; i++; i<stocks.length)
+				symbols[i] = stocks[i].symbol;
+		
+		
+                return await _proxyStockQuote.GetStockQuotesData(symbols);
+            }
+            catch(Exception ex){
+                throw ex;
+            }
+	}
 
         public async Task<bool> AddUserStock(string username, string symbol)
         {
