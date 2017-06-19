@@ -14,32 +14,32 @@ using AutoMapper;
 
 namespace StockPortfolio.Api
 {
-    public class TokenProvider
+    public class TokenGenerator : ITokenGenerator
     {
-        private readonly TokenProviderOptions _options;
+        private readonly TokenGeneratorOptions _options;
         private readonly ILogger _logger;
         private IStockPortfolioRepository _repo;
         private IMapper _mapper;
-        TokenProvider(IOptions<TokenProviderOptions> options,
+        TokenGenerator(IOptions<TokenGeneratorOptions> options,
             ILoggerFactory loggerFactory,
             IStockPortfolioRepository repo,
             IMapper mapper){
-                _logger = loggerFactory.CreateLogger<TokenProvider>();
+                _logger = loggerFactory.CreateLogger<TokenGenerator>();
                 _options = options.Value;
                 _repo = repo;
                 _mapper = mapper;
         }
-        public async Task<TokenModel> CreateToken(CredentialModel model)
+        public async Task<TokenModel> CreateToken(string username)
         {
             try
             {
-                var user = await _repo.GetUser(model.UserName);
+                var user = await _repo.GetUser(username);
                 var userModel= _mapper.Map<UserModel>(user);
                 var now = DateTime.UtcNow;
         
                 var claims = new Claim[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, model.UserName),
+                    new Claim(JwtRegisteredClaimNames.Sub, userModel.UserName),
                     new Claim(JwtRegisteredClaimNames.Sub, userModel.FirstName),
                     new Claim(JwtRegisteredClaimNames.Sub, userModel.LastName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

@@ -45,6 +45,55 @@ namespace StockPortfolio.Api.Controllers
 		return BadRequest();
         }
 
+       [EnableCors("CorsPolicy")]   
+        [Authorize]
+        [HttpPost("{symbol}")]
+        public async Task<IActionResult> Post(string username, string symbol)
+        {
+            try
+            {
+                var model = await _repo.GetStock(symbol);
+                var stock = _mapper.Map<Stock>(model);
+
+                if (await _repo.AddUserStock(username, stock.symbol))
+                {
+                    var quote = await _repo.GetStockQuote(stock.symbol);
+        		    return Ok(_mapper.Map<<StockQuoteModel>(quote));
+                }
+                else
+                {
+                _logger.LogWarning("Could not save User stock to the database");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Threw exception while saving User stock: {ex}");
+            }
+
+            return BadRequest();
+
+        }
+
+
+       [EnableCors("CorsPolicy")]
+        [Authorize]
+        [HttpDelete("{symbol}")]
+        public async Task<IActionResult> Delete(string username, string symbol)
+        {
+            try
+            {
+                if(await _repo.DeleteUserStock(username, symbol))
+                    return Ok();
+                else
+                    return NotFound($"Could not delete user stock {symbol} for {username}");
+
+            }
+            catch (Exception)
+            {
+            }
+
+            return BadRequest("Could not delete user stock");
+        }
 
     }
 }

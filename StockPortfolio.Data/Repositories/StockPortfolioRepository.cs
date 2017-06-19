@@ -342,21 +342,23 @@ namespace StockPortfolio.Data.Repositories
             }
         }
 
-	public  async Task<IEnumerable<StockQuote>> GetUserStockQuotes(string username){
-	    var filter = Builders<User>.Filter.Eq("userName", username);
+    
+
+	public  async Task<IEnumerable<StockQuote>> GetUserStockQuotes(string username)
+    {
+	        var filter = Builders<User>.Filter.Eq("userName", username);
             try
-	    {
-		var filteredUser = await _contextUser
+	        {
+		    var filteredUser = await _contextUser
                             .Users
                             .Find(filter)
                             .FirstOrDefaultAsync();
 
                 var stocks =   filteredUser.stocks;
-		string[] symbols = new string[stocks.length];
-			for(int i=0; i++; i<stocks.length)
-				symbols[i] = stocks[i].symbol;
-		
-		
+		        string[] symbols = new string[stocks.length];
+			    for(int i=0; i++; i<stocks.length)
+				    symbols[i] = stocks[i].symbol;
+
                 return await _proxyStockQuote.GetStockQuotesData(symbols);
             }
             catch(Exception ex){

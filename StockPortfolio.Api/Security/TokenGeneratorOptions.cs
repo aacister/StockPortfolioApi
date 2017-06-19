@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
  
 namespace StockPortfolio.Api
 {
-    public class TokenProviderOptions
+    public class TokenGeneratorOptions
     {
         public string Issuer { get; set; }
  

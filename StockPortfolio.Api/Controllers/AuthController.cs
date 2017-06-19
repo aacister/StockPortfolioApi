@@ -19,17 +19,20 @@ namespace StockPortfolio.Api.Controllers
      [RouteAttribute("api/[controller]")]
     public class AuthController: BaseController
     {
-        private TokenProvider _tokenProvider;
+        private ITokenGenerator _tokenGenerator;
+        private readonly IPasswordHasher _passwordHasher;
         private ILogger<AuthController> _logger;
         private IStockPortfolioRepository _repo;
         private IMapper _mapper;
         public AuthController(IStockPortfolioRepository repo,
             ILogger<AuthController> logger,
-            TokenProvider tokenProvider,
+            ITokenGenerator tokenGenerator,
+            IPasswordHasher passwordHasher,
             IMapper mapper){
             _repo = repo;
             _logger = logger;
             _tokenProvider = tokenProvider;
+            _passwordHasher;
             _mapper = mapper;
   
         }
@@ -38,34 +41,69 @@ namespace StockPortfolio.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] CredentialModel model)
         {
-        try
-        {
-            var user = await _repo.GetUser(model.UserName);
-            if (user != null)
+            try
             {
-                if (VerifyPassword(user, model.Password))
+                var user = await _repo.GetUser(model.UserName);
+                if (user != null)
                 {
-                    var tokenModel = await _tokenProvider.CreateToken(model);
-                    if(tokenModel != null)
-                        return Ok(tokenModel);
+                    var personModel = _mapper.Map<PersonModel>(user);
+                     if (personModel.Hash.SequenceEqual(_passwordHasher.Hash(model.Password, personModel.Salt)))
+                    {
+
+                        var tokenModel = await _tokenGenerator.CreateToken(personModel.UserName);
+                        
+                        if(tokenModel != null)
+                        {
+                            var userModel = _mapper.Map<UserModel>(user);
+                            userModel.Token = tokenModel;
+                            return Ok(userModel);
+                        }
+                    }
                 }
+                
             }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError($"Exception thrown while logging in: {ex}");  
-        }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Exception thrown while logging in: {ex}");  
+            }
 
             return BadRequest("Failed to login");
         }
 
         [EnableCors("CorsPolicy")]
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody] UserModel model)
+        public async Task<IActionResult> Register([FromBody] CredentialModel credModel)
         {
         try
         {
-            var user = _mapper.Map<User>(model);
+            var user = await _repo.GetUser(credModel.UserName);
+            if (user != null)
+            {
+                _logger.LogWarning("User already exists.");
+            }
+            else
+            {
+                user = _mapper.Map<User>(credModel);
+                if (await _repo.AddUser(user))
+                {
+                    user = await _repo.GetUser(model.UserName);
+                    var personModel = _mapper.Map<PersonModel>(user);
+                    if (personModel.Hash.SequenceEqual(_passwordHasher.Hash(model.Password, personModel.Salt)))
+                    {
+
+                        var tokenModel = await _tokenGenerator.CreateToken(personModel.UserName);
+                        
+                        if(tokenModel != null)
+                        {
+                            var userModel = _mapper.Map<UserModel>(user);
+                            userModel.Token = tokenModel;
+                            return Ok(userModel);
+                        }
+                    }
+                }
+            }
+
+     
 
                 if (await _repo.AddUser(user))
                 {
@@ -90,10 +128,5 @@ namespace StockPortfolio.Api.Controllers
             return BadRequest("Failed to register");
         }
 
-
-        private bool VerifyPassword(User user, string modelPassword){
-            return user.password.Trim().ToUpper() == modelPassword.Trim().ToUpper();
-
-        }
     }
 }

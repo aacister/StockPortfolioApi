@@ -71,6 +71,8 @@ namespace StockPortfolio.Api
 
             services.AddIdentityWithMongoStores(_config.GetSection("Data:DbConnectionString").Value).AddDefaultTokenProviders();
             services.AddSingleton(_config);
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddAutoMapper();
             services.AddMvc();
             services.AddScoped<IStockPortfolioRepository, StockPortfolioRepository>();
