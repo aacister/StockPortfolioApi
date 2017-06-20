@@ -31,8 +31,8 @@ namespace StockPortfolio.Api.Controllers
             IMapper mapper){
             _repo = repo;
             _logger = logger;
-            _tokenProvider = tokenProvider;
-            _passwordHasher;
+            _tokenGenerator = tokenGenerator;
+            _passwordHasher = passwordHasher;
             _mapper = mapper;
   
         }
@@ -55,7 +55,7 @@ namespace StockPortfolio.Api.Controllers
                         if(tokenModel != null)
                         {
                             var userModel = _mapper.Map<UserModel>(user);
-                            userModel.Token = tokenModel;
+                            userModel.Token = tokenModel.ToString();
                             return Ok(userModel);
                         }
                     }
@@ -86,17 +86,17 @@ namespace StockPortfolio.Api.Controllers
                 user = _mapper.Map<User>(credModel);
                 if (await _repo.AddUser(user))
                 {
-                    user = await _repo.GetUser(model.UserName);
+                    user = await _repo.GetUser(credModel.UserName);
                     var personModel = _mapper.Map<PersonModel>(user);
-                    if (personModel.Hash.SequenceEqual(_passwordHasher.Hash(model.Password, personModel.Salt)))
+                    if (personModel.Hash.SequenceEqual(_passwordHasher.Hash(credModel.Password, personModel.Salt)))
                     {
 
-                        var tokenModel = await _tokenGenerator.CreateToken(personModel.UserName);
+                        var tokenModel = await _tokenGenerator.CreateToken(credModel.UserName);
                         
                         if(tokenModel != null)
                         {
                             var userModel = _mapper.Map<UserModel>(user);
-                            userModel.Token = tokenModel;
+                            userModel.Token = tokenModel.ToString();
                             return Ok(userModel);
                         }
                     }
@@ -110,7 +110,7 @@ namespace StockPortfolio.Api.Controllers
                    var userModel= _mapper.Map<UserModel>(user);
                    var credentialModel = _mapper.Map<CredentialModel>(userModel);
 
-                   var tokenModel = await _tokenProvider.CreateToken(credentialModel);
+                   var tokenModel = await _tokenGenerator.CreateToken(credentialModel.UserName);
                    if(tokenModel != null)
                         return Ok(tokenModel);
                 }

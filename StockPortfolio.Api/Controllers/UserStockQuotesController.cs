@@ -16,13 +16,14 @@ using StockPortfolio.Data.Interfaces;
 
 namespace StockPortfolio.Api.Controllers
 {
-     [Route("api/users/{username}/stockquotes")]
+    [Route("api/users/{username}/stockquotes")]
     public class UserStockQuotesController: BaseController
     {
         private ILogger<UsersController> _logger;
         private IMapper _mapper;
         private IStockPortfolioRepository _repo;
-        public UserStocksController(IStockPortfolioRepository repo,
+
+        public UserStockQuotesController(IStockPortfolioRepository repo,
             ILogger<UsersController> logger,
             IMapper mapper){
             _repo = repo;
@@ -58,7 +59,7 @@ namespace StockPortfolio.Api.Controllers
                 if (await _repo.AddUserStock(username, stock.symbol))
                 {
                     var quote = await _repo.GetStockQuote(stock.symbol);
-        		    return Ok(_mapper.Map<<StockQuoteModel>(quote));
+        		    return Ok(_mapper.Map<StockQuoteModel>(quote));
                 }
                 else
                 {

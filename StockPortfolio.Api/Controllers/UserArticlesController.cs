@@ -39,7 +39,7 @@ namespace StockPortfolio.Api.Controllers
         {
 		try{
 			var articles = await _repo.GetUserArticles(username);
-			return OK(_mapper.Map<IEnumerable<ArticleModel>>(articles));
+			return Ok(_mapper.Map<IEnumerable<ArticleModel>>(articles));
 
 
 		}

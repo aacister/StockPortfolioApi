@@ -54,7 +54,7 @@ namespace StockPortfolio.Data.Proxy
 		var urlStocks = string.Empty;
 		foreach(var symbol in symbols)
 		{
-			if(urlStocks.length <= 0)
+			if(string.IsNullOrEmpty(urlStocks))
 				urlStocks += symbol;
 			urlStocks += "%2C" + symbol;
 		}
@@ -65,7 +65,7 @@ namespace StockPortfolio.Data.Proxy
                         var quoteResponse = JsonConvert.DeserializeObject<StockQuoteResponse>(result);
                         if(quoteResponse.status.code == 200)
                             if(quoteResponse.results.Count > 0)
-                                return quoteResponse.results[0];
+                                return quoteResponse.results;
                             else 
                                 return null;
                         else

@@ -4,3 +4,9 @@
 /Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Data/bin/Debug/netcoreapp1.1/StockPortfolio.Data.pdb
 /Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Data/obj/Debug/netcoreapp1.1/StockPortfolio.Data.dll
 /Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Data/obj/Debug/netcoreapp1.1/StockPortfolio.Data.pdb
+C:\Users\aacister\Documents\MeanApps\StockPortfolio\StockPortfolioApi\StockPortfolio.Data\bin\Debug\netcoreapp1.1\StockPortfolio.Data.deps.json
+C:\Users\aacister\Documents\MeanApps\StockPortfolio\StockPortfolioApi\StockPortfolio.Data\obj\Debug\netcoreapp1.1\StockPortfolio.Data.AssemblyInfo.cs
+C:\Users\aacister\Documents\MeanApps\StockPortfolio\StockPortfolioApi\StockPortfolio.Data\obj\Debug\netcoreapp1.1\StockPortfolio.Data.dll
+C:\Users\aacister\Documents\MeanApps\StockPortfolio\StockPortfolioApi\StockPortfolio.Data\obj\Debug\netcoreapp1.1\StockPortfolio.Data.pdb
+C:\Users\aacister\Documents\MeanApps\StockPortfolio\StockPortfolioApi\StockPortfolio.Data\bin\Debug\netcoreapp1.1\StockPortfolio.Data.dll
+C:\Users\aacister\Documents\MeanApps\StockPortfolio\StockPortfolioApi\StockPortfolio.Data\bin\Debug\netcoreapp1.1\StockPortfolio.Data.pdb

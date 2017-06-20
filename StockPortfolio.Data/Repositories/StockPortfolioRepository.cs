@@ -41,11 +41,11 @@ namespace StockPortfolio.Data.Repositories
             }
         }
 
-	public  async Task<StockQuote> GetStockQuotes(params string[] symbols)
+	public  async Task<IEnumerable<StockQuote>> GetStockQuotes(params string[] symbols)
     {
         try
 	    {
-                return await _proxyStockQuote.GetStockQuotesData(symbol);
+                return await _proxyStockQuote.GetStockQuotesData(symbols);
         }
         catch(Exception ex){
                 throw ex;
@@ -290,7 +290,9 @@ namespace StockPortfolio.Data.Repositories
                     var source = sources.Where(x => x.id == sourceId).FirstOrDefault<NewsSource>();
                     if(source != null)
                     {
-                        return await _proxyArticle.GetArticleData(source.id);
+                        string[] sourceIds = new string[1];
+                        sourceIds[0] = source.id;
+                        return await _proxyArticle.GetArticlesData(sourceIds);
                     }
                     else
                         return null;
@@ -311,12 +313,15 @@ namespace StockPortfolio.Data.Repositories
                             .Find(filter)
                             .FirstOrDefaultAsync();
 
-                var sources =   filteredUser.newsSources;
-		string[] sourceIds = new string[sourceIds.length];
-			for(int i=0; i++; i<sources.length)
-				sourceIds[i] = sources[i].sourceId;
-		
-		
+        var sources =   filteredUser.newsSources;
+		string[] sourceIds = new string[sources.Count()];
+        var cnt=0;
+                foreach(var s in sources)
+                {
+                    sourceIds[cnt] = s.id;
+                    cnt++;
+                }
+
                 return await _proxyArticle.GetArticlesData(sourceIds);
             }
             catch(Exception ex){
@@ -356,9 +361,14 @@ namespace StockPortfolio.Data.Repositories
                             .FirstOrDefaultAsync();
 
                 var stocks =   filteredUser.stocks;
-		        string[] symbols = new string[stocks.length];
-			    for(int i=0; i++; i<stocks.length)
-				    symbols[i] = stocks[i].symbol;
+
+		        string[] symbols = new string[stocks.Count()];
+                var cnt=0;
+                foreach(var s in stocks)
+                {
+                    symbols[cnt] = s.symbol;
+                    cnt++;
+                }
 
                 return await _proxyStockQuote.GetStockQuotesData(symbols);
             }

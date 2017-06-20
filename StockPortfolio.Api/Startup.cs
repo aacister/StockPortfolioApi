@@ -54,7 +54,7 @@ namespace StockPortfolio.Api
 
             var secretKey = _config.GetSection("Tokens:Key").Value;
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
-            services.Configure<TokenProviderOptions>(options => 
+            services.Configure<TokenGeneratorOptions>(options => 
             {
                 options.Audience = _config.GetSection("Tokens:Audience").Value;
                 options.Issuer = _config.GetSection("Tokens:Issuer").Value;
@@ -72,7 +72,7 @@ namespace StockPortfolio.Api
             services.AddIdentityWithMongoStores(_config.GetSection("Data:DbConnectionString").Value).AddDefaultTokenProviders();
             services.AddSingleton(_config);
             services.AddScoped<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddAutoMapper();
             services.AddMvc();
             services.AddScoped<IStockPortfolioRepository, StockPortfolioRepository>();

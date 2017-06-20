@@ -11,6 +11,7 @@ namespace StockPortfolio.Data.Interfaces
         //Stock Quotes
         Task<StockQuote> GetStockQuote(string symbol);
 
+
         //Stocks
         Task<IEnumerable<Stock>> GetAllStocks();
         Task<Stock> GetStock(string symbol);
@@ -35,13 +36,18 @@ namespace StockPortfolio.Data.Interfaces
         Task<IEnumerable<NewsSource>> GetUserNewsSources(string username);
         Task<bool> AddUserNewsSource(string username, NewsSource source);
         Task<bool> DeleteUserNewsSource(string username, string sourceId);
+        
         //User Arcticles
+        Task<IEnumerable<Article>> GetUserArticles(string username);
         Task<IEnumerable<Article>> GetUserArticles(string username, string sourceId);
        
        //User Stocks
         Task<IEnumerable<Stock>> GetUserStocks(string username);
         Task<bool> AddUserStock(string username, string symbol);
         Task<bool> DeleteUserStock(string username, string symbol);
+
+        //User Stock Quotes
+        Task<IEnumerable<StockQuote>> GetUserStockQuotes(string username);
 
     }
 }

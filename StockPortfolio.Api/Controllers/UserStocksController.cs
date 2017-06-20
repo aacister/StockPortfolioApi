@@ -22,6 +22,7 @@ namespace StockPortfolio.Api.Controllers
         private ILogger<UsersController> _logger;
         private IMapper _mapper;
         private IStockPortfolioRepository _repo;
+
         public UserStocksController(IStockPortfolioRepository repo,
             ILogger<UsersController> logger,
             IMapper mapper){
@@ -34,12 +35,12 @@ namespace StockPortfolio.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string username)
         {
-        var stocks = await _repo.GetUserStocks(username);
+            var stocks = await _repo.GetUserStocks(username);
 
-        return Ok(_mapper.Map<IEnumerable<StockModel>>(stocks));
+            return Ok(_mapper.Map<IEnumerable<StockModel>>(stocks));
         }
 
-         [EnableCors("CorsPolicy")]   
+        [EnableCors("CorsPolicy")]   
         [HttpGet("{symbol}", Name="UserStockGet")]
         public async Task<IActionResult> Get(string username, string symbol)
         {

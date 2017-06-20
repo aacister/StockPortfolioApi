@@ -40,7 +40,7 @@ namespace StockPortfolio.Data.Proxy
                         if(articleResponse.status == "ok")
                         {
                             foreach(var a in articleResponse.articles)
-                                articles.add(a);
+                                articles.Add(a);
                         }
 
                     }
