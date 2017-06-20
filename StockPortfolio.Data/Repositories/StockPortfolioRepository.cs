@@ -41,14 +41,15 @@ namespace StockPortfolio.Data.Repositories
             }
         }
 
-	public  async Task<StockQuote> GetStockQuotes(param string[] symbols){
-            try
+	public  async Task<StockQuote> GetStockQuotes(params string[] symbols)
+    {
+        try
 	    {
                 return await _proxyStockQuote.GetStockQuotesData(symbol);
-            }
-            catch(Exception ex){
+        }
+        catch(Exception ex){
                 throw ex;
-            }
+        }
 	}
 
 	
