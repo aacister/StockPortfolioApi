@@ -20,5 +20,11 @@ namespace StockPortfolio.Api.Models
         public IList<StockModel> Stocks {get; set;}
 
         public IList<NewsSourceModel> News {get; set;}
+    
+
+        public UserModel(){
+            this.Stocks = new List<StockModel>();
+            this.News = new List<NewsSourceModel>();
+        }
     }
 }

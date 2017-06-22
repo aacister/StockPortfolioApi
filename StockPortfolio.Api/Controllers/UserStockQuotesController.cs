@@ -53,8 +53,7 @@ namespace StockPortfolio.Api.Controllers
         {
             try
             {
-                var model = await _repo.GetStock(symbol);
-                var stock = _mapper.Map<Stock>(model);
+                var stock = await _repo.GetStock(symbol);
 
                 if (await _repo.AddUserStock(username, stock.symbol))
                 {

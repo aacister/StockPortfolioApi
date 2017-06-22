@@ -92,6 +92,8 @@ namespace StockPortfolio.Api.Controllers
                     user = _mapper.Map<User>(credModel);
                     user.salt = CreateSalt();
                     user.hash = _passwordHasher.Hash(credModel.Password, user.salt);
+                    user.stocks = new List<Stock>();
+                    user.newsSources = new List<NewsSource>();
                     if (await _repo.AddUser(user))
                     {
                         user = await _repo.GetUser(credModel.UserName);

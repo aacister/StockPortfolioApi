@@ -106,7 +106,7 @@ namespace StockPortfolio.Api
                 ValidIssuer = _config.GetSection("Tokens:Issuer").Value,
                 ValidateAudience = true,
                 ValidAudience = _config.GetSection("Tokens:Audience").Value,
-                ValidateLifetime = true
+                ValidateLifetime = false
             };
         
             app.UseJwtBearerAuthentication(new JwtBearerOptions{

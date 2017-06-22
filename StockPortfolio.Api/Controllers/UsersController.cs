@@ -30,7 +30,7 @@ namespace StockPortfolio.Api.Controllers
             _mapper = mapper;
         }
 
-        [EnableCors("CorsPolicy")]   
+        [EnableCors("CorsPolicy")]  
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -63,33 +63,6 @@ namespace StockPortfolio.Api.Controllers
            return BadRequest();
         }
 
-        [EnableCors("CorsPolicy")]
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody]UserModel model)
-        {
-            try
-            {
-                model.UserName = model.UserName;
-                var user = _mapper.Map<User>(model);
-
-                if (await _repo.AddUser(user))
-                {
-                var newUri = Url.Link("UserGet", new { username = user.userName });
-                return Created(newUri, _mapper.Map<UserModel>(user));
-                }
-                else
-                {
-                _logger.LogWarning("Could not save User to the database");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Threw exception while saving User: {ex}");
-            }
-
-            return BadRequest();
-
-        }
 
         [EnableCors("CorsPolicy")]   
         [Authorize]
