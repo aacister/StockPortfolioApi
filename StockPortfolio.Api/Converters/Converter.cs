@@ -73,18 +73,6 @@ namespace StockPortfolio.Api.Converters
                 opt => opt.MapFrom(user => user.zip))
                 .ReverseMap();
 
-              CreateMap<User, PersonModel>()
-              .ForMember(u => u.UserName,
-                opt => opt.MapFrom(user => user.userName))
-              
-              .ForMember(u => u.FirstName,
-                opt => opt.MapFrom(user => user.firstName))
-              .ForMember(u => u.LastName,
-                opt => opt.MapFrom(user => user.lastName))
-              .ForMember(u => u.Zip,
-                opt => opt.MapFrom(user => user.zip))
-
-                .ReverseMap();
 
             CreateMap<CredentialModel, UserModel>()
               .ForMember(u => u.UserName,

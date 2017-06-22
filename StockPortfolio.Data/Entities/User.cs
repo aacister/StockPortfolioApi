@@ -13,7 +13,6 @@ namespace StockPortfolio.Data.Entities
         public string lastName {get; set;}
         public string zip {get; set;}
         public byte[] hash { get; set; }
-
         public byte[] salt { get; set; }
         public IEnumerable<Stock> stocks {get; set;}
         public IEnumerable<NewsSource> newsSources {get; set;}

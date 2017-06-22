@@ -12,63 +12,57 @@ using StockPortfolio.Api.Converters;
 using StockPortfolio.Data.Interfaces;
 using AutoMapper;
 
-namespace StockPortfolio.Api
+namespace StockPortfolio.Api.Security
 {
     public class TokenGenerator : ITokenGenerator
     {
-        private readonly TokenGeneratorOptions _options;
-        private readonly ILogger _logger;
+        private IOptions<TokenGeneratorOptions> _options;
+        private ILogger<TokenGenerator> _logger;
         private IStockPortfolioRepository _repo;
         private IMapper _mapper;
-        TokenGenerator(IOptions<TokenGeneratorOptions> options,
-            ILoggerFactory loggerFactory,
+        public TokenGenerator(IOptions<TokenGeneratorOptions> options,
+            ILogger<TokenGenerator> logger,
             IStockPortfolioRepository repo,
             IMapper mapper){
-                _logger = loggerFactory.CreateLogger<TokenGenerator>();
-                _options = options.Value;
+                _options = options;
+                _logger = logger;
                 _repo = repo;
                 _mapper = mapper;
         }
-        public async Task<TokenModel> CreateToken(string username)
+        public async Task<string> CreateToken(string username)
         {
+            var token = string.Empty;
             try
             {
                 var user = await _repo.GetUser(username);
                 var userModel= _mapper.Map<UserModel>(user);
                 var now = DateTime.UtcNow;
-        
+         
                 var claims = new Claim[]
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, userModel.UserName),
-                    new Claim(JwtRegisteredClaimNames.Sub, userModel.FirstName),
-                    new Claim(JwtRegisteredClaimNames.Sub, userModel.LastName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64)
                 };
 
 
                 var jwt = new JwtSecurityToken(
-                    issuer: _options.Issuer,
-                    audience: _options.Audience,
+                    issuer: _options.Value.Issuer,
+                    audience: _options.Value.Audience,
                     claims: claims,
                     notBefore: now,
-                    expires: now.Add(_options.Expiration),
-                    signingCredentials: _options.SigningCredentials);
+                    expires: now.Add(_options.Value.Expiration),
+                    signingCredentials: _options.Value.SigningCredentials);
                 
-                var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-        
-                return new TokenModel()
-                {
-                    AccessToken = encodedJwt,
-                    ExpiresIn = (int)_options.Expiration.TotalSeconds
-                };    
+                token = new JwtSecurityTokenHandler().WriteToken(jwt);
 
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Exception thrown while creating JWT: {ex}");
             }
-            return null;
+
+            return token; 
 
         }
 

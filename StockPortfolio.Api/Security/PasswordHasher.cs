@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace StockPortfolio.Api
+namespace StockPortfolio.Api.Security
 {
     public class PasswordHasher : IPasswordHasher
     {

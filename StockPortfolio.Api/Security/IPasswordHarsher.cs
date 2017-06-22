@@ -1,4 +1,4 @@
-namespace StockPortfolio.Api
+namespace StockPortfolio.Api.Security
 {
     public interface IPasswordHasher
     {

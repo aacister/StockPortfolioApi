@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using StockPortfolio.Api.Models;
 
-namespace  StockPortfolio.Api
+namespace  StockPortfolio.Api.Security
 {
     public interface ITokenGenerator
     {
-        Task<TokenModel> CreateToken(string username);
+        Task<string> CreateToken(string username);
     }
 }

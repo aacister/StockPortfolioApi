@@ -1,7 +1,7 @@
 using System;
 using Microsoft.IdentityModel.Tokens;
  
-namespace StockPortfolio.Api
+namespace StockPortfolio.Api.Security
 {
     public class TokenGeneratorOptions
     {

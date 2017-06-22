@@ -12,15 +12,17 @@ using StockPortfolio.Data.Entities;
 using StockPortfolio.Api.Models;
 using StockPortfolio.Api.Converters;
 using StockPortfolio.Data.Interfaces;
+using  StockPortfolio.Api.Security;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 
 namespace StockPortfolio.Api.Controllers
 {
-     [RouteAttribute("api/[controller]")]
+    [RouteAttribute("api/[controller]")]
     public class AuthController: BaseController
     {
         private ITokenGenerator _tokenGenerator;
-        private readonly IPasswordHasher _passwordHasher;
+        private IPasswordHasher _passwordHasher;
         private ILogger<AuthController> _logger;
         private IStockPortfolioRepository _repo;
         private IMapper _mapper;
@@ -36,30 +38,34 @@ namespace StockPortfolio.Api.Controllers
             _mapper = mapper;
   
         }
-
+ 
         [EnableCors("CorsPolicy")]
-        [HttpPost]
-        public async Task<IActionResult> Login([FromBody] CredentialModel model)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] CredentialModel credModel)
         {
             try
             {
-                var user = await _repo.GetUser(model.UserName);
+                var user = await _repo.GetUser(credModel.UserName);
                 if (user != null)
                 {
-                    var personModel = _mapper.Map<PersonModel>(user);
-                     if (personModel.Hash.SequenceEqual(_passwordHasher.Hash(model.Password, personModel.Salt)))
+                     if (user.hash.SequenceEqual(_passwordHasher.Hash(credModel.Password, user.salt)))
                     {
-
-                        var tokenModel = await _tokenGenerator.CreateToken(personModel.UserName);
+                        var userModel = _mapper.Map<UserModel>(user);
+                        //Create token
+                        var token = await _tokenGenerator.CreateToken(userModel.UserName);
                         
-                        if(tokenModel != null)
+                        if(token.Length >0)
                         {
-                            var userModel = _mapper.Map<UserModel>(user);
-                            userModel.Token = tokenModel.ToString();
+                            userModel.Token = token;
                             return Ok(userModel);
                         }
+                        else
+                            _logger.LogError("Failed to login.  Failed to create token.");
                     }
+                    _logger.LogError("Failed to login.  Password is incorrect.");
                 }
+                else
+                    _logger.LogWarning("Failed to login. User does not exist.");
                 
             }
             catch (Exception ex)
@@ -71,53 +77,37 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]
-        [HttpPost]
-        public async Task<IActionResult> Register([FromBody] CredentialModel credModel)
+        [HttpPost("register")]
+        public async Task<IActionResult> Post([FromBody] CredentialModel credModel)
         {
         try
         {
-            var user = await _repo.GetUser(credModel.UserName);
-            if (user != null)
-            {
-                _logger.LogWarning("User already exists.");
-            }
-            else
-            {
-                user = _mapper.Map<User>(credModel);
-                if (await _repo.AddUser(user))
+                var user = await _repo.GetUser(credModel.UserName);
+                if (user != null)
                 {
-                    user = await _repo.GetUser(credModel.UserName);
-                    var personModel = _mapper.Map<PersonModel>(user);
-                    if (personModel.Hash.SequenceEqual(_passwordHasher.Hash(credModel.Password, personModel.Salt)))
-                    {
-
-                        var tokenModel = await _tokenGenerator.CreateToken(credModel.UserName);
-                        
-                        if(tokenModel != null)
-                        {
-                            var userModel = _mapper.Map<UserModel>(user);
-                            userModel.Token = tokenModel.ToString();
-                            return Ok(userModel);
-                        }
-                    }
-                }
-            }
-
-     
-
-                if (await _repo.AddUser(user))
-                {
-                   var userModel= _mapper.Map<UserModel>(user);
-                   var credentialModel = _mapper.Map<CredentialModel>(userModel);
-
-                   var tokenModel = await _tokenGenerator.CreateToken(credentialModel.UserName);
-                   if(tokenModel != null)
-                        return Ok(tokenModel);
+                    _logger.LogWarning("User already exists.");
                 }
                 else
                 {
-                    _logger.LogWarning("Could not register user");
+                    user = _mapper.Map<User>(credModel);
+                    user.salt = CreateSalt();
+                    user.hash = _passwordHasher.Hash(credModel.Password, user.salt);
+                    if (await _repo.AddUser(user))
+                    {
+                        user = await _repo.GetUser(credModel.UserName);
+                        var userModel = _mapper.Map<UserModel>(user);
+                        //Create Token
+                        var token = await _tokenGenerator.CreateToken(credModel.UserName);
+                        if(token.Length>0)
+                        {
+                            userModel.Token= token;
+                            return Ok(userModel);  
+                        }
+                    }
+                    else
+                        _logger.LogError("Could not register user.");
                 }
+                return BadRequest("Failed to register");
 
         }
         catch (Exception ex)
@@ -127,6 +117,13 @@ namespace StockPortfolio.Api.Controllers
 
             return BadRequest("Failed to register");
         }
+
+     private byte[] CreateSalt(){
+            byte[] salt = new byte[24];
+            var keyGenerator = RandomNumberGenerator.Create();
+            keyGenerator.GetBytes(salt);
+            return salt;
+     }
 
     }
 }

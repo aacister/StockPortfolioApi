@@ -16,6 +16,7 @@ using StockPortfolio.Data;
 using StockPortfolio.Data.Entities;
 using StockPortfolio.Data.Interfaces;
 using StockPortfolio.Data.Repositories;
+using  StockPortfolio.Api.Security;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -43,7 +44,7 @@ namespace StockPortfolio.Api
         public void ConfigureServices(IServiceCollection services)
         {
 
-             services.Configure<Settings>(options =>
+            services.Configure<Settings>(options =>
             {
                 options.DbConnectionString = _config.GetSection("Data:DbConnectionString").Value;
                 options.DbName = _config.GetSection("Data:DbName").Value;
@@ -54,28 +55,35 @@ namespace StockPortfolio.Api
 
             var secretKey = _config.GetSection("Tokens:Key").Value;
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey));
-            services.Configure<TokenGeneratorOptions>(options => 
+            services.Configure<TokenGeneratorOptions>(options =>
             {
                 options.Audience = _config.GetSection("Tokens:Audience").Value;
                 options.Issuer = _config.GetSection("Tokens:Issuer").Value;
                 options.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
             });
 
-    
-            services.AddCors(options => { options.AddPolicy("CorsPolicy", 
-                                      builder => builder.AllowAnyOrigin() 
-                                                        .AllowAnyMethod() 
-                                                        .AllowAnyHeader() 
-                                                        .AllowCredentials()); 
-                                    });          
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+            builder => builder.AllowAnyOrigin()
+                              .AllowAnyMethod()
+                              .AllowAnyHeader()
+                              .AllowCredentials());
+            });
 
             services.AddIdentityWithMongoStores(_config.GetSection("Data:DbConnectionString").Value).AddDefaultTokenProviders();
-            services.AddSingleton(_config);
+            NewMethod(services);
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<ITokenGenerator, TokenGenerator>();
             services.AddAutoMapper();
             services.AddMvc();
             services.AddScoped<IStockPortfolioRepository, StockPortfolioRepository>();
+        }
+
+        private void NewMethod(IServiceCollection services)
+        {
+            services.AddSingleton(_config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -105,9 +113,6 @@ namespace StockPortfolio.Api
                 AutomaticAuthenticate = true,
                 TokenValidationParameters = tokenValidationParameters
             });
-
-            
- 
 
             app.UseMvc();
         }
