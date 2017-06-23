@@ -30,6 +30,7 @@ namespace StockPortfolio.Api.Controllers
 
         [EnableCors("CorsPolicy")]      
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get(string username)
         {
         var sources = await _repo.GetUserNewsSources(username);
@@ -38,6 +39,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
          [EnableCors("CorsPolicy")]   
+        [Authorize]
         [HttpGet("{sourceId}", Name="UserNewsSourceGet")]
         public async Task<IActionResult> Get(string username, string sourceId)
         {

@@ -32,6 +32,7 @@ namespace StockPortfolio.Api.Controllers
         }
 
         [EnableCors("CorsPolicy")]      
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get(string username)
         {
