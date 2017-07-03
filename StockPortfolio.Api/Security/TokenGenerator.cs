@@ -47,6 +47,7 @@ namespace StockPortfolio.Api.Security
 
 
                 var jwt = new JwtSecurityToken(
+                    username: username,
                     issuer: _options.Value.Issuer,
                     audience: _options.Value.Audience,
                     claims: claims,
