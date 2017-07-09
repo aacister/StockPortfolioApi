@@ -62,7 +62,7 @@ namespace StockPortfolio.Api.Controllers
 
 
         [EnableCors("CorsPolicy")]   
-        [Authorize]
+   
         [HttpPost("{symbol}")]
         public async Task<IActionResult> Post(string username, string symbol)
         {
