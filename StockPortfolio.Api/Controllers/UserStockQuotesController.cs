@@ -42,7 +42,8 @@ namespace StockPortfolio.Api.Controllers
 
         		return Ok(_mapper.Map<IEnumerable<StockQuoteModel>>(quotes));
 		}
-		catch{
+		catch(Exception ex){
+            
 		}
 		return BadRequest();
         }

@@ -1,7 +1,7 @@
 {
   "runtimeOptions": {
     "additionalProbingPaths": [
-      "/Users/aacister/.nuget/packages"
+      "C:\\Users\\aacister-wksadmin\\.nuget\\packages"
     ]
   }
 }
