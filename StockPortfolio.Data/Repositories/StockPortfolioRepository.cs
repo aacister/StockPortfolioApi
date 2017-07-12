@@ -262,13 +262,11 @@ namespace StockPortfolio.Data.Repositories
         }
 
         public async Task<bool> DeleteUserNewsSource(string username, string sourceId){
-            var source = await _proxyNewsSource.GetNewsSourceDataBySourceId(sourceId);// This line will be removed
-            //Need to figure out how to pull using symbol
-            var filter = Builders<User>.Filter.Eq("UserName", username);
-            var delete = Builders<User>.Update.Pull(u => u.newsSources, source);
             try{
-                await _contextUser.Users.UpdateOneAsync(
-                    filter, delete);
+
+                var delete = Builders<User>.Update.PullFilter(u => u.newsSources, f => f.id == sourceId);
+                await _contextUser.Users.FindOneAndUpdateAsync(
+                    p => p.userName == username, delete); 
             }
             catch(Exception ex){
                 throw ex;
@@ -404,17 +402,12 @@ namespace StockPortfolio.Data.Repositories
 
         public async Task<bool> DeleteUserStock(string username, string symbol)
         {
-            var filterStock = Builders<Stock>.Filter.Eq("symbol", symbol);
-            var filter = Builders<User>.Filter.Eq("UserName", username);
             
             try{
-                var stock = await _contextStock
-                                .Stocks
-                                .Find(filterStock)
-                                .FirstOrDefaultAsync();
-                var delete = Builders<User>.Update.Pull(u => u.stocks, stock);
-                await _contextUser.Users.UpdateOneAsync(
-                    filter, delete);
+
+                var delete = Builders<User>.Update.PullFilter(u => u.stocks, f => f.symbol == symbol);
+                await _contextUser.Users.FindOneAndUpdateAsync(
+                    p => p.userName == username, delete);
             }
             catch(Exception ex){
                 throw ex;

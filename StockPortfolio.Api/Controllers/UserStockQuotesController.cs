@@ -78,7 +78,7 @@ namespace StockPortfolio.Api.Controllers
 
 
        [EnableCors("CorsPolicy")]
-        [Authorize]
+  
         [HttpDelete("{symbol}")]
         public async Task<IActionResult> Delete(string username, string symbol)
         {

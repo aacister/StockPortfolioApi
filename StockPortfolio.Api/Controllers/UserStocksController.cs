@@ -103,8 +103,9 @@ namespace StockPortfolio.Api.Controllers
                     return NotFound($"Could not delete user stock {symbol} for {username}");
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError($"Threw exception while saving User stock: {ex}");
             }
 
             return BadRequest("Could not delete user stock");
