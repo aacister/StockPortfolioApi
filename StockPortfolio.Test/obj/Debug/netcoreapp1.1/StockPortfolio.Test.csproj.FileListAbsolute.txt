@@ -1,0 +1,15 @@
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Test.deps.json
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Test.runtimeconfig.json
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Test.runtimeconfig.dev.json
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/obj/Debug/netcoreapp1.1/StockPortfolio.Test.AssemblyInfo.cs
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Test.dll
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Test.pdb
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Api.dll
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Data.dll
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Data.pdb
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/bin/Debug/netcoreapp1.1/StockPortfolio.Api.pdb
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/obj/Debug/netcoreapp1.1/StockPortfolio.Test.dll
+/Users/aacister/Documents/MeanApps/StockPortfolio/StockPortfolio.Test/obj/Debug/netcoreapp1.1/StockPortfolio.Test.pdb
