@@ -78,7 +78,7 @@ namespace StockPortfolio.Api.Controllers
 
         [EnableCors("CorsPolicy")]
         [HttpPost("register")]
-        public async Task<IActionResult> Post([FromBody] CredentialModel credModel)
+        public async Task<IActionResult> Register([FromBody] CredentialModel credModel)
         {
         try
         {
